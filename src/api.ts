@@ -40,11 +40,33 @@ export async function sendConsultoriaMessage(params: {
     throw new Error('Falha ao comunicar com o serviço de consultoria')
   }
 
-  const data = await response.json()
+  const contentType = response.headers.get('content-type') ?? ''
+  let data: any = null
+  let textFallback: string | null = null
+
+  if (contentType.includes('application/json')) {
+    try {
+      data = await response.json()
+    } catch {
+      textFallback = await response.text()
+    }
+  } else {
+    textFallback = await response.text()
+  }
+
+  if (!data) {
+    const replyText =
+      (textFallback ?? '').trim() || 'O consultor recebeu sua mensagem e está processando a resposta.'
+
+    return {
+      conversationId: params.conversationId ?? crypto.randomUUID(),
+      reply: replyText,
+    }
+  }
 
   return {
     conversationId: data.conversationId ?? params.conversationId ?? crypto.randomUUID(),
-    reply: data.reply ?? String(data.message ?? ''),
+    reply: data.reply ?? String(data.message ?? textFallback ?? ''),
   }
 }
 

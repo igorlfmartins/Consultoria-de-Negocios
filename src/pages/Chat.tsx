@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react'
+import type { FormEvent, KeyboardEvent } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Hash, Loader2, LogOut, MessageSquareMore, Plus, Send } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
@@ -113,7 +113,7 @@ export function Chat() {
     await sendMessage()
   }
 
-  function handleKeyDown(event: React.KeyboardEvent) {
+  function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
       sendMessage()
