@@ -78,6 +78,7 @@ export function Chat() {
   const [isLoadingSessions, setIsLoadingSessions] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   useEffect(() => {
     if (!userId) return
@@ -92,6 +93,17 @@ export function Chat() {
     if (!messagesEndRef.current) return
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }, [currentSession.messages.length])
+
+  useEffect(() => {
+    const el = inputRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    const lineHeight = 20
+    const maxHeight = lineHeight * 5
+    const next = Math.min(el.scrollHeight, maxHeight)
+    el.style.height = `${next}px`
+    el.style.overflowY = el.scrollHeight > maxHeight ? 'auto' : 'hidden'
+  }, [input])
 
   const canSend = useMemo(() => input.trim().length > 0 && !isLoading, [input, isLoading])
 
@@ -388,6 +400,7 @@ export function Chat() {
               <div className="flex items-end gap-3">
                 <div className="flex-1 rounded-lg border border-slate-800 bg-slate-950/80 px-3 py-2">
                   <textarea
+                    ref={inputRef}
                     rows={2}
                     className="w-full resize-none bg-transparent text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none"
                     placeholder="Formule sua pergunta de negócio de forma objetiva. Ex: 'Quais alavancas posso usar para aumentar margens em 20% nos próximos 12 meses?'"
