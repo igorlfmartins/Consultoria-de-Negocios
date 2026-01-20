@@ -77,17 +77,8 @@ export function Chat() {
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingSessions, setIsLoadingSessions] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [selectedAgents, setSelectedAgents] = useState<string[]>([])
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
-
-  const agentOptions = [
-    'Consultor C-Level',
-    'Consultor de Vendas',
-    'Consultor de Marketing',
-    'Consultor de Branding',
-    'Auditor Brutal',
-  ]
 
   useEffect(() => {
     if (!userId) return
@@ -163,7 +154,6 @@ export function Chat() {
         conversationId: currentSession.id,
         message: text,
         history: currentSession.messages,
-        selectedAgents,
       })
 
       const aiMessage: ChatMessage = {
@@ -263,38 +253,7 @@ export function Chat() {
         </div>
 
         <div className="flex-1 overflow-y-auto px-3 py-4 text-xs">
-          <div className="px-2 mb-3">
-            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-[0.2em] mb-2 block">
-              Direcionar para
-            </span>
-            <div className="space-y-2">
-              {agentOptions.map((agent) => (
-                <div key={agent} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={agent}
-                    checked={selectedAgents.includes(agent)}
-                    onChange={() =>
-                      setSelectedAgents((prev) =>
-                        prev.includes(agent)
-                          ? prev.filter((name) => name !== agent)
-                          : [...prev, agent]
-                      )
-                    }
-                    className="h-3.5 w-3.5 rounded-sm bg-slate-800 border-slate-700 text-sky-500 focus:ring-sky-600"
-                  />
-                  <label htmlFor={agent} className="ml-2 text-slate-300 text-[11px]">
-                    {agent}
-                  </label>
-                </div>
-              ))}
-            </div>
-            <p className="text-[10px] text-slate-500 mt-2">
-              Se nenhum for selecionado, a IA escolherá os mais relevantes.
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between px-2 mb-2 pt-3 border-t border-slate-800">
+          <div className="flex items-center justify-between px-2 mb-2">
             <span className="text-[11px] font-medium text-slate-400 uppercase tracking-[0.2em]">
               Histórico de sessões
             </span>
