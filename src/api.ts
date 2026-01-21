@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-const API_URL = import.meta.env.VITE_API_URL || '/api/consultoria'
-=======
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/consultoria'
->>>>>>> 987b8a4 (Initial frontend commit: UI and Logic)
 const CLIENT_API_KEY = import.meta.env.VITE_CLIENT_API_KEY || ''
 
 export type SessionSummary = {

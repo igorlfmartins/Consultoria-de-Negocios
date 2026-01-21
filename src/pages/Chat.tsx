@@ -1,6 +1,6 @@
 import type { FormEvent, KeyboardEvent } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Hash, Loader2, LogOut, MessageSquareMore, Plus, Send } from 'lucide-react'
+import { Hash, Loader2, LogOut, MessageSquareMore, Plus, Send, Trash2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { useAuth } from '../auth'
 import type { ChatMessage, SessionSummary } from '../api'
@@ -125,6 +125,26 @@ export function Chat() {
       messages,
     })
     setError(null)
+  }
+
+  function handleDeleteSession(sessionId: string, event: React.MouseEvent) {
+    event.stopPropagation()
+    if (!userId) return
+
+    if (!window.confirm('Tem certeza que deseja excluir esta conversa?')) return
+
+    const nextSessions = sessions.filter((s) => s.id !== sessionId)
+    setSessions(nextSessions)
+    saveSessionsToStorage(userId, nextSessions)
+    
+    // Clean up messages from storage
+    try {
+      window.localStorage.removeItem(getMessagesKey(userId, sessionId))
+    } catch {}
+
+    if (currentSession.id === sessionId) {
+      handleNewSession()
+    }
   }
 
   async function sendMessage() {
@@ -273,15 +293,15 @@ export function Chat() {
                 key={session.id}
                 type="button"
                 onClick={() => handleSelectSession(session)}
-                className={`w-full flex items-start gap-2 rounded-md px-3 py-2 text-left transition ${
+                className={`w-full flex items-start gap-2 rounded-md px-3 py-2 text-left transition group ${
                   isActive ? 'bg-slate-900 border border-sky-700/70' : 'border border-transparent hover:bg-slate-900/60'
                 }`}
               >
                 <span className="mt-0.5 text-slate-500">
                   <Hash className="h-3 w-3" />
                 </span>
-                <span className="flex-1">
-                  <span className="block text-[11px] font-medium text-slate-200">
+                <span className="flex-1 min-w-0">
+                  <span className="block text-[11px] font-medium text-slate-200 truncate">
                     {session.title || 'Sessão de consultoria'}
                   </span>
                   {session.createdAt && (
@@ -292,6 +312,14 @@ export function Chat() {
                       })}
                     </span>
                   )}
+                </span>
+                <span
+                  role="button"
+                  onClick={(e) => handleDeleteSession(session.id, e)}
+                  className="opacity-0 group-hover:opacity-100 p-1 hover:text-red-400 text-slate-600 transition-opacity"
+                  title="Excluir conversa"
+                >
+                  <Trash2 className="h-3 w-3" />
                 </span>
               </button>
             )
