@@ -1,4 +1,3 @@
-import type { FormEvent, KeyboardEvent } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Loader2, MessageSquareMore, Target, ArrowRight, Settings, X, CreditCard, Moon, Sun, Globe, Zap } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
