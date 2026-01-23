@@ -1,6 +1,6 @@
 import type { FormEvent, KeyboardEvent } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Hash, Loader2, LogOut, MessageSquareMore, Plus, Send, Trash2, Target, ArrowRight } from 'lucide-react'
+import { Hash, Loader2, LogOut, MessageSquareMore, Plus, Send, Trash2, Target, ArrowRight, FileText } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { useAuth } from '../auth'
 import type { ChatMessage, SessionSummary } from '../api'
@@ -254,6 +254,10 @@ export function Chat() {
     sendMessage(`Gostaria de um aprofundamento específico na área de ${area.label}, complementando a resposta anterior.`, area.label)
   }
 
+  function handleGenerateReport() {
+    sendMessage("Com base na nossa conversa, gere agora o Relatório Estratégico Completo (Diagnóstico + Plano 30/60/90 + Riscos + Primeiro Passo).")
+  }
+
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
@@ -486,6 +490,18 @@ export function Chat() {
                     {area.label}
                   </button>
                 ))}
+                
+                <div className="w-px h-5 bg-slate-800 mx-1 self-center" />
+                
+                <button
+                  type="button"
+                  onClick={handleGenerateReport}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all whitespace-nowrap bg-slate-800 text-sky-400 border border-slate-700 hover:bg-slate-700 hover:text-sky-300 hover:border-sky-500/30"
+                  title="Gerar relatório completo da conversa"
+                >
+                  <FileText className="h-3 w-3" />
+                  Gerar Relatório
+                </button>
               </div>
             </div>
 
