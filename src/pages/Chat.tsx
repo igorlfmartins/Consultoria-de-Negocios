@@ -1,8 +1,10 @@
 import type { FormEvent, KeyboardEvent } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Hash, Loader2, LogOut, MessageSquareMore, Plus, Send, Trash2, Target, ArrowRight, FileText, Settings, X, CreditCard, Moon, Sun, Globe, Zap } from 'lucide-react'
+import { Loader2, MessageSquareMore, Target, ArrowRight, Settings, X, CreditCard, Moon, Sun, Globe, Zap } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { useTranslation } from 'react-i18next'
+import { ChatInput } from '../components/ChatInput'
+import { Sidebar } from '../components/Sidebar'
 import { useAuth } from '../auth'
 import type { ChatMessage, SessionSummary } from '../api'
 import { sendConsultoriaMessage } from '../api'
@@ -83,7 +85,6 @@ export function Chat() {
     title: t('chat.session.new'),
     messages: [],
   })
-  const [input, setInput] = useState('')
   const [selectedFocus, setSelectedFocus] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingSessions, setIsLoadingSessions] = useState(false)
@@ -96,7 +97,6 @@ export function Chat() {
   const [toneLevel, setToneLevel] = useState(3)
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
-  const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   const focusAreas = useMemo(() => FOCUS_AREAS(t), [t])
 
@@ -143,19 +143,6 @@ export function Chat() {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }, [currentSession.messages.length])
 
-  useEffect(() => {
-    const el = inputRef.current
-    if (!el) return
-    el.style.height = 'auto'
-    const lineHeight = 20
-    const maxHeight = lineHeight * 5
-    const next = Math.min(el.scrollHeight, maxHeight)
-    el.style.height = `${next}px`
-    el.style.overflowY = el.scrollHeight > maxHeight ? 'auto' : 'hidden'
-  }, [input])
-
-  const canSend = useMemo(() => input.trim().length > 0 && !isLoading, [input, isLoading])
-
   function handleNewSession() {
     setCurrentSession({
       id: null,
@@ -196,10 +183,9 @@ export function Chat() {
     }
   }
 
-  async function sendMessage(textOverride?: string, focusOverride?: string) {
-    if (!userId || (!canSend && !textOverride)) return
+  async function sendMessage(text: string, focusOverride?: string) {
+    if (!userId || !text.trim()) return
 
-    const text = textOverride || input.trim()
     const focusToSend = focusOverride !== undefined ? focusOverride : selectedFocus
     const now = new Date().toISOString()
 
@@ -214,7 +200,7 @@ export function Chat() {
       ...prev,
       messages: [...prev.messages, userMessage],
     }))
-    if (!textOverride) setInput('')
+    
     setIsLoading(true)
     setError(null)
 
@@ -280,16 +266,12 @@ export function Chat() {
 
         saveMessagesToStorage(userId, conversationId, fullMessages)
       }
-    } catch (err) {
-      setError(t('chat.body.error'))
+    } catch (err: any) {
+      console.error(err)
+      setError(err.message || t('chat.body.error'))
     } finally {
       setIsLoading(false)
     }
-  }
-
-  async function handleSubmit(event: FormEvent) {
-    event.preventDefault()
-    await sendMessage()
   }
 
   function handleDeepDive(area: { id: string; label: string }) {
@@ -300,137 +282,37 @@ export function Chat() {
     sendMessage(t('chat.footer.generateReport'))
   }
 
-  function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault()
-      sendMessage()
-    }
-  }
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 flex">
-      <aside className="hidden md:flex md:w-72 lg:w-80 flex-col border-r border-slate-800 bg-gradient-to-b from-slate-950 to-navy-900/80">
-        <div className="px-5 pt-5 pb-4 border-b border-slate-800">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-sky-500">{t('chat.sidebar.header')}</p>
-              <p className="text-sm text-slate-400">{t('chat.sidebar.subHeader')}</p>
-            </div>
-            <div className="h-9 w-9 rounded-full border border-sky-500/50 flex items-center justify-center text-xs font-semibold text-sky-300 bg-slate-950/80">
-              CN
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleNewSession}
-            className="btn-primary w-full justify-between text-xs"
-          >
-            <span className="inline-flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              {t('chat.sidebar.newSessionButton')}
-            </span>
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-3 py-4 text-xs">
-          <div className="flex items-center justify-between px-2 mb-2">
-            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-[0.2em]">
-              {t('chat.sidebar.history')}
-            </span>
-            {isLoadingSessions && <Loader2 className="h-3 w-3 animate-spin text-slate-500" />}
-          </div>
-
-          {sessions.length === 0 && !isLoadingSessions && (
-            <p className="text-[11px] text-slate-500 px-2">
-              {t('chat.sidebar.emptyHistory')}
-            </p>
-          )}
-
-          {sessions.map((session) => {
-            const isActive = session.id === currentSession.id
-            return (
-              <button
-                key={session.id}
-                type="button"
-                onClick={() => handleSelectSession(session)}
-                className={`w-full flex items-start gap-2 rounded-md px-3 py-2 text-left transition group ${
-                  isActive ? 'bg-slate-900 border border-sky-700/70' : 'border border-transparent hover:bg-slate-900/60'
-                }`}
-              >
-                <span className="mt-0.5 text-slate-500">
-                  <Hash className="h-3 w-3" />
-                </span>
-                <span className="flex-1 min-w-0">
-                  <span className="block text-[11px] font-medium text-slate-200 truncate">
-                    {session.title || t('chat.session.defaultTitle')}
-                  </span>
-                  {session.createdAt && (
-                    <span className="block text-[10px] text-slate-500 mt-0.5">
-                      {new Date(session.createdAt).toLocaleString(i18n.language, {
-                        dateStyle: 'short',
-                        timeStyle: 'short',
-                      })}
-                    </span>
-                  )}
-                </span>
-                <span
-                  role="button"
-                  onClick={(e) => handleDeleteSession(session.id, e)}
-                  className="opacity-0 group-hover:opacity-100 p-1 hover:text-red-400 text-slate-600 transition-opacity"
-                  title={t('chat.sidebar.deleteConversation')}
-                >
-                  <Trash2 className="h-3 w-3" />
-                </span>
-              </button>
-            )
-          })}
-        </div>
-
-        <div className="px-4 py-3 border-t border-slate-800 text-[11px] text-slate-500 flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="font-medium text-slate-300">{userId}</span>
-            <span className="text-[10px] text-slate-500">{t('chat.sidebar.userAccessLevel')}</span>
-          </div>
-          <button
-            type="button"
-            onClick={signOut}
-            className="inline-flex items-center gap-1 rounded-md border border-slate-700 px-2 py-1 text-[11px] text-slate-300 hover:bg-slate-900"
-          >
-            <LogOut className="h-3 w-3" />
-            {t('chat.sidebar.logout')}
-          </button>
-        </div>
-      </aside>
+      <Sidebar
+        sessions={sessions}
+        currentSessionId={currentSession.id}
+        isLoading={isLoadingSessions}
+        onNewSession={handleNewSession}
+        onSelectSession={handleSelectSession}
+        onDeleteSession={handleDeleteSession}
+        userId={userId}
+        onSignOut={signOut}
+      />
 
       <main className="flex-1 flex flex-col min-w-0 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-        <header className="border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-950/90 backdrop-blur flex items-center justify-between px-4 md:px-6 py-3 transition-colors duration-300">
+        <header className="border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-950/90 backdrop-blur flex items-center justify-between px-6 py-4 transition-colors duration-300">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-lg bg-sky-600/90 flex items-center justify-center text-white">
-              <MessageSquareMore className="h-5 w-5" />
-            </div>
+            <MessageSquareMore className="h-5 w-5 text-sky-500" />
             <div>
-              <h1 className="text-sm md:text-base font-semibold text-slate-900 dark:text-slate-50">{t('chat.header.title')}</h1>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                {t('chat.header.subtitle')}
-              </p>
+              <h1 className="text-sm font-semibold text-slate-900 dark:text-slate-50">{t('chat.header.title')}</h1>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400">
-              <span className="flex flex-col text-right">
-                <span>{t('chat.header.aiStatus')}</span>
-                <span className="text-sky-600 dark:text-sky-400 font-medium">{t('chat.header.aiModel')}</span>
-              </span>
-              <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_0_4px_rgba(16,185,129,0.2)]" />
+            <div className="hidden sm:flex items-center gap-2 text-[10px] uppercase tracking-wider font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded-full">
+              <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              {t('chat.header.aiStatus')}
             </div>
-            
-            <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block" />
 
             <button
               onClick={() => setIsSettingsOpen(true)}
-              className="p-2 rounded-md text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors"
+              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
               title={t('chat.header.settings')}
             >
               <Settings className="h-5 w-5" />
@@ -514,19 +396,18 @@ export function Chat() {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="border-t border-slate-800 bg-slate-950/95 backdrop-blur px-4 md:px-8 py-4">
-            <div className="max-w-3xl mx-auto mb-3 overflow-x-auto no-scrollbar">
-              <div className="flex gap-2">
+          <div className="border-t border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/95 backdrop-blur px-6 py-6 transition-colors duration-300">
+            <div className="max-w-3xl mx-auto mb-4 overflow-x-auto no-scrollbar">
+              <div className="flex gap-2 justify-center">
                 <button
                   type="button"
                   onClick={() => setSelectedFocus(null)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-semibold transition-all whitespace-nowrap ${
                     selectedFocus === null
-                      ? 'bg-sky-500/10 text-sky-400 border border-sky-500/50 shadow-[0_0_10px_-3px_rgba(14,165,233,0.3)]'
-                      : 'bg-slate-900/50 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-300'
+                      ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                      : 'bg-slate-200 text-slate-500 hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700'
                   }`}
                 >
-                  <Target className="h-3 w-3" />
                   {t('chat.footer.integratedView')}
                 </button>
                 {focusAreas.map((area) => (
@@ -534,64 +415,23 @@ export function Chat() {
                     key={area.id}
                     type="button"
                     onClick={() => setSelectedFocus(selectedFocus === area.label ? null : area.label)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
+                    className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-semibold transition-all whitespace-nowrap ${
                       selectedFocus === area.label
-                        ? `${area.bg} ${area.color} ${area.border} border shadow-sm`
-                        : 'bg-slate-900/50 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-300'
+                        ? 'bg-sky-500 text-white'
+                        : 'bg-slate-200 text-slate-500 hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700'
                     }`}
                   >
                     {area.label}
                   </button>
                 ))}
-                
-                <div className="w-px h-5 bg-slate-800 mx-1 self-center" />
-                
-                <button
-                  type="button"
-                  onClick={handleGenerateReport}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all whitespace-nowrap bg-slate-800 text-sky-400 border border-slate-700 hover:bg-slate-700 hover:text-sky-300 hover:border-sky-500/30"
-                  title={t('chat.footer.generateReportTooltip')}
-                >
-                  <FileText className="h-3 w-3" />
-                  {t('chat.footer.generateReport')}
-                </button>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-2">
-              <div className="flex items-end gap-3">
-                <div className="flex-1 rounded-lg border border-slate-800 bg-slate-950/80 px-3 py-2 flex items-end gap-2">
-                  <textarea
-                    ref={inputRef}
-                    rows={2}
-                    className="w-full resize-none bg-transparent text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none"
-                    placeholder={t('chat.footer.textareaPlaceholder')}
-                    value={input}
-                    onChange={(event) => setInput(event.target.value)}
-                    onKeyDown={handleKeyDown}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleGenerateReport}
-                    className="text-slate-400 hover:text-slate-200 p-1 rounded-md"
-                    title={t('chat.footer.generateReportTooltip')}
-                  >
-                    <FileText className="h-4 w-4" />
-                  </button>
-                </div>
-                <button
-                  type="submit"
-                  disabled={!canSend}
-                  className="btn-primary h-10 w-10 md:w-auto md:px-4 md:gap-2 flex-shrink-0"
-                >
-                  <Send className="h-4 w-4" />
-                  <span className="hidden md:inline text-xs">{t('chat.footer.send')}</span>
-                </button>
-              </div>
-              <p className="text-[10px] text-slate-500">
-                {t('chat.footer.disclaimer')}
-              </p>
-            </form>
+            <ChatInput
+              onSendMessage={sendMessage}
+              onGenerateReport={handleGenerateReport}
+              isLoading={isLoading}
+            />
           </div>
         </section>
 

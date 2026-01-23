@@ -2,54 +2,70 @@
   "chat": {
     "sidebar": {
       "header": "Consultoría",
-      "subHeader": "Panel Estratégico",
-      "newSessionButton": "Nueva Sesión de Consultoría",
-      "history": "Historial de sesiones",
-      "emptyHistory": "Las sesiones anteriores aparecerán aquí.",
-      "deleteConversation": "Eliminar conversación",
-      "confirmDelete": "¿Estás seguro de que quieres eliminar esta conversación?",
-      "userAccessLevel": "Acceso Corporativo",
-      "logout": "Cerrar Sesión"
+      "subHeader": "Estrategia",
+      "newSessionButton": "Nueva Sesión",
+      "history": "Historial",
+      "emptyHistory": "Sin sesiones previas",
+      "deleteConversation": "Eliminar",
+      "confirmDelete": "¿Eliminar conversación?",
+      "userAccessLevel": "Corporativo",
+      "logout": "Salir"
     },
     "header": {
       "title": "Consultoría Estratégica",
-      "subtitle": "Mentoría de negocios en tiempo real, impulsada por datos y benchmarks del mercado.",
-      "aiStatus": "Consultor IA Activo",
-      "aiModel": "Línea Estratégica",
-      "settings": "Configuración"
+      "subtitle": "Mentoría basada en datos",
+      "aiStatus": "En línea",
+      "aiModel": "Consultor IA",
+      "settings": "Ajustes"
     },
     "body": {
       "initialBriefing": {
-        "title": "Briefing Inicial",
-        "heading": "Estructure su sesión de consultoría de negocios",
-        "paragraph": "Describa brevemente el contexto de su empresa, el objetivo de la consultoría y el horizonte de tiempo. La IA estructurará un análisis centrado en la priorización, los riesgos y las oportunidades.",
-        "example1": "Ej: \"Soy el CEO de una SaaS B2B en etapa inicial en Brasil\"",
-        "example2": "Ej: \"Quiero aumentar los ingresos recurrentes en 12 meses\"",
-        "example3": "Ej: \"Quiero evaluar la expansión a nuevos segmentos o países\""
+        "title": "Briefing",
+        "heading": "¿Cómo puedo ayudar?",
+        "paragraph": "Describa su desafío, objetivo o contexto actual.",
+        "example1": "Análisis SaaS B2B",
+        "example2": "Estrategia de Ingresos",
+        "example3": "Expansión de Mercado"
       },
       "aiMessage": {
-        "senderName": "Consultor Estratégico",
-        "deepDive": "Profundizar análisis en:"
+        "senderName": "Consultor",
+        "deepDive": "Profundizar:"
       },
-      "loading": "Analizando contexto, escenarios e implicaciones estratégicas...",
-      "error": "No se pudo obtener la respuesta del consultor. Por favor, inténtelo de nuevo en unos momentos."
+      "loading": "Analizando...",
+      "error": "Error en la respuesta."
     },
     "footer": {
-      "focusGeneral": "Foco de la Sesión: General",
-      "generateReport": "Generar Informe Estratégico",
-      "inputPlaceholder": "Escriba su mensaje o describa el desafío de su negocio..."
+      "focusGeneral": "General",
+      "generateReport": "Informe",
+      "generateReportTooltip": "Generar Informe Completo",
+      "inputPlaceholder": "Describa su desafío...",
+      "textareaPlaceholder": "Escriba su mensaje...",
+      "send": "Enviar",
+      "disclaimer": "La IA puede cometer errores. Verifique info crítica.",
+      "integratedView": "Visión General"
     },
     "session": {
-      "new": "Nueva sesión de consultoría",
-      "defaultTitle": "Sesión de consultoría"
+      "new": "Nueva sesión",
+      "defaultTitle": "Sesión"
     },
     "focusAreas": {
       "sales": "Ventas",
-      "marketing": "Marketing y Branding",
-      "finance": "Finanzas y Legal",
-      "management": "Gestión y Estrategia",
-      "tech": "Tecnología e Innovación"
+      "marketing": "Marketing",
+      "finance": "Finanzas",
+      "management": "Gestión",
+      "tech": "Tecnología"
     }
+  },
+  "login": {
+    "appTitle": "ConsultoriaNegocios",
+    "title": "Portal de Consultoría Estratégica",
+    "subtitle": "Acceda al panel para recibir análisis y recomendaciones estratégicas en tiempo real.",
+    "emailLabel": "Correo corporativo",
+    "emailPlaceholder": "nombre.apellido@empresa.com",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "Ingrese su contraseña",
+    "submitButton": "Acceder al Panel",
+    "footer": "Este es un entorno de consultoría estratégica impulsado por IA. No comparta información confidencial sin autorización."
   },
   "settings": {
     "title": "Configuración",

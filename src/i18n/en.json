@@ -2,54 +2,70 @@
   "chat": {
     "sidebar": {
       "header": "Consulting",
-      "subHeader": "Strategic Panel",
-      "newSessionButton": "New Consulting Session",
-      "history": "Session History",
-      "emptyHistory": "Previous sessions will appear here.",
-      "deleteConversation": "Delete conversation",
-      "confirmDelete": "Are you sure you want to delete this conversation?",
-      "userAccessLevel": "Corporate Access",
+      "subHeader": "Strategy",
+      "newSessionButton": "New Session",
+      "history": "History",
+      "emptyHistory": "No previous sessions",
+      "deleteConversation": "Delete",
+      "confirmDelete": "Delete conversation?",
+      "userAccessLevel": "Corporate",
       "logout": "Log Out"
     },
     "header": {
       "title": "Strategic Consulting",
-      "subtitle": "Real-time business mentoring, driven by data and market benchmarks.",
-      "aiStatus": "Active AI Consultant",
-      "aiModel": "Strategic Line",
+      "subtitle": "Data-driven mentoring",
+      "aiStatus": "Online",
+      "aiModel": "AI Consultant",
       "settings": "Settings"
     },
     "body": {
       "initialBriefing": {
-        "title": "Initial Briefing",
-        "heading": "Structure your business consulting session",
-        "paragraph": "Briefly describe your company's context, consulting objective, and time horizon. The AI will structure an analysis focusing on prioritization, risks, and opportunities.",
-        "example1": "e.g., \"I am the CEO of an early-stage B2B SaaS in Brazil\"",
-        "example2": "e.g., \"I want to increase recurring revenue within 12 months\"",
-        "example3": "e.g., \"I want to evaluate expansion into new segments or countries\""
+        "title": "Briefing",
+        "heading": "How can I help?",
+        "paragraph": "Describe your challenge, goal, or current context.",
+        "example1": "SaaS B2B Analysis",
+        "example2": "Revenue Strategy",
+        "example3": "Market Expansion"
       },
       "aiMessage": {
-        "senderName": "Strategic Consultant",
-        "deepDive": "Deepen analysis in:"
+        "senderName": "Consultant",
+        "deepDive": "Deep dive:"
       },
-      "loading": "Analyzing context, scenarios, and strategic implications...",
-      "error": "Could not get the consultant's response. Please try again in a few moments."
+      "loading": "Analyzing...",
+      "error": "Response error."
     },
     "footer": {
-      "focusGeneral": "Session Focus: General",
-      "generateReport": "Generate Strategic Report",
-      "inputPlaceholder": "Type your message or describe your business challenge..."
+      "focusGeneral": "General",
+      "generateReport": "Report",
+      "generateReportTooltip": "Generate Full Report",
+      "inputPlaceholder": "Describe your challenge...",
+      "textareaPlaceholder": "Type your message...",
+      "send": "Send",
+      "disclaimer": "AI can make mistakes. Verify critical info.",
+      "integratedView": "Overview"
     },
     "session": {
-      "new": "New consulting session",
-      "defaultTitle": "Consulting session"
+      "new": "New session",
+      "defaultTitle": "Session"
     },
     "focusAreas": {
       "sales": "Sales",
-      "marketing": "Marketing and Branding",
-      "finance": "Finance and Legal",
-      "management": "Management and Strategy",
-      "tech": "Technology and Innovation"
+      "marketing": "Marketing",
+      "finance": "Finance",
+      "management": "Management",
+      "tech": "Technology"
     }
+  },
+  "login": {
+    "appTitle": "ConsultoriaNegocios",
+    "title": "Strategic Consulting Portal",
+    "subtitle": "Access the dashboard to receive real-time strategic analysis and recommendations.",
+    "emailLabel": "Corporate Email",
+    "emailPlaceholder": "firstname.lastname@company.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "submitButton": "Access Dashboard",
+    "footer": "This is an AI-powered strategic consulting environment. Do not share confidential information without authorization."
   },
   "settings": {
     "title": "Settings",
