@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Loader2, MessageSquareMore, Target, ArrowRight, Settings, X, CreditCard, Moon, Sun, Globe, Zap } from 'lucide-react'
+import { Loader2, MessageSquareMore, Target, ArrowRight, Settings } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { useTranslation } from 'react-i18next'
 import { ChatInput } from '../components/ChatInput'
+import { SettingsPanel } from '../components/SettingsPanel'
 import { Sidebar } from '../components/Sidebar'
 import { useAuth } from '../auth'
 import type { ChatMessage, SessionSummary } from '../api'
@@ -103,7 +104,7 @@ export function Chat() {
   useEffect(() => {
     const savedLang = localStorage.getItem('consultoria_language') || 'en'
     const savedTheme = (localStorage.getItem('consultoria_theme') as 'light' | 'dark') || 'dark'
-    const savedTone = parseInt(localStorage.getItem('consultoria_tone') || '3', 10)
+    const savedTone = parseInt(localStorage.getItem('consultoria_tone') || '1', 10)
     setLanguage(savedLang)
     setTheme(savedTheme)
     setToneLevel(savedTone)
@@ -434,128 +435,17 @@ export function Chat() {
           </div>
         </section>
 
-        {isSettingsOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-            <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Settings className="h-5 w-5 text-sky-500" />
-                  {t('chat.settings.title')}
-                </h2>
-                <button onClick={() => setIsSettingsOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-              
-              <div className="p-6 space-y-6">
-                {/* Language */}
-                <div className="space-y-3">
-                  <label className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                    <Globe className="h-4 w-4" />
-                    {t('chat.settings.language.label')}
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { code: 'en', label: 'English' },
-                      { code: 'pt', label: 'Português' },
-                      { code: 'es', label: 'Español' }
-                    ].map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => setLanguage(lang.code)}
-                        className={`px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
-                          language === lang.code
-                            ? 'bg-sky-50 dark:bg-sky-500/10 border-sky-200 dark:border-sky-500/50 text-sky-700 dark:text-sky-400'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'
-                        }`}
-                      >
-                        {lang.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Tone Level */}
-                <div className="space-y-3">
-                  <label className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                    <Zap className="h-4 w-4" />
-                    {t('chat.settings.tone.label')}
-                  </label>
-                  <div className="grid grid-cols-1 gap-2">
-                    {[
-                      { level: 1, label: t('chat.settings.tone.level1.label'), desc: t('chat.settings.tone.level1.desc') },
-                      { level: 2, label: t('chat.settings.tone.level2.label'), desc: t('chat.settings.tone.level2.desc') },
-                      { level: 3, label: t('chat.settings.tone.level3.label'), desc: t('chat.settings.tone.level3.desc') }
-                    ].map((tone) => (
-                      <button
-                        key={tone.level}
-                        onClick={() => setToneLevel(tone.level)}
-                        className={`flex flex-col items-start px-3 py-2 rounded-lg text-sm border transition-all ${
-                          toneLevel === tone.level
-                            ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/50 text-emerald-800 dark:text-emerald-400'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'
-                        }`}
-                      >
-                        <span className="font-medium">{tone.label}</span>
-                        <span className="text-[10px] opacity-80 text-left">{tone.desc}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Theme */}
-                <div className="space-y-3">
-                  <label className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                    {theme === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-                    {t('chat.settings.theme.label')}
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => setTheme('light')}
-                      className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
-                        theme === 'light'
-                           ? 'bg-sky-50 border-sky-200 text-sky-700'
-                           : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300'
-                      }`}
-                    >
-                      <Sun className="h-4 w-4" />
-                      {t('chat.settings.theme.light')}
-                    </button>
-                    <button
-                      onClick={() => setTheme('dark')}
-                      className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
-                        theme === 'dark'
-                           ? 'bg-slate-800 border-slate-600 text-sky-400'
-                           : 'bg-white border-slate-200 text-slate-600'
-                      }`}
-                    >
-                      <Moon className="h-4 w-4" />
-                      {t('chat.settings.theme.dark')}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Subscription */}
-                <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
-                  <div className="bg-slate-50 dark:bg-slate-950/50 rounded-xl p-4 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-slate-900 dark:text-white">{t('chat.settings.subscription.title')}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{t('chat.settings.subscription.description')}</p>
-                    </div>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg text-xs font-bold hover:opacity-90 transition-opacity">
-                      <CreditCard className="h-3 w-3" />
-                      {t('chat.settings.subscription.button')}
-                    </button>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="p-4 bg-slate-50 dark:bg-slate-950/50 text-center text-[10px] text-slate-400 border-t border-slate-200 dark:border-slate-800">
-                {t('chat.settings.version')}
-              </div>
-            </div>
-          </div>
-        )}
+        <SettingsPanel
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          language={language}
+          setLanguage={setLanguage}
+          theme={theme}
+          setTheme={setTheme}
+          toneLevel={toneLevel}
+          setToneLevel={setToneLevel}
+          onSignOut={signOut}
+        />
       </main>
     </div>
   )

@@ -69,26 +69,35 @@
   },
   "settings": {
     "title": "Configuración",
-    "subtitle": "Gestiona la configuración de la interfaz y de la sesión.",
     "language": {
-      "label": "Idioma",
-      "description": "Establece el idioma de la interfaz y de las respuestas de la IA."
+      "label": "Idioma"
     },
     "theme": {
       "label": "Apariencia",
-      "description": "Personaliza la apariencia de la interfaz.",
       "light": "Claro",
       "dark": "Oscuro"
     },
     "tone": {
-      "label": "Nivel de Franqueza del Consultor",
-      "description": "Ajusta el nivel de franqueza y profundidad del consultor de IA.",
-      "level1": "Nivel 1: Coach Empático",
-      "level1_desc": "Respuestas más amables y motivadoras, centradas en generar confianza y guiar de forma positiva.",
-      "level2": "Nivel 2: Socio Socrático",
-      "level2_desc": "Respuestas que desafían suposiciones con preguntas, fomentando la reflexión profunda y el descubrimiento autónomo.",
-      "level3": "Nivel 3: Auditor Brutal",
-      "level3_desc": "Respuestas directas, sin rodeos y basadas en datos, centradas en la eficiencia y la verdad sin adornos."
+      "label": "Tono de la IA",
+      "level1": {
+        "label": "Coach",
+        "desc": "Respuestas empáticas y motivadoras."
+      },
+      "level2": {
+        "label": "Socrático",
+        "desc": "Preguntas que desafían suposiciones."
+      },
+      "level3": {
+        "label": "Claridad Brutal",
+        "desc": "Feedback directo, sin filtros."
+      }
+    },
+    "subscription": {
+      "label": "Suscripción",
+      "manage": "Gestionar Suscripción"
+    },
+    "logout": {
+      "label": "Cerrar Sesión"
     }
   }
 }

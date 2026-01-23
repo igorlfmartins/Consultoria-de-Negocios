@@ -69,26 +69,35 @@
   },
   "settings": {
     "title": "Settings",
-    "subtitle": "Manage interface and session settings.",
     "language": {
-      "label": "Language",
-      "description": "Sets the language for the interface and AI responses."
+      "label": "Language"
     },
     "theme": {
       "label": "Appearance",
-      "description": "Customize the look and feel of the interface.",
       "light": "Light",
       "dark": "Dark"
     },
     "tone": {
-      "label": "Consultant's Frankness Level",
-      "description": "Adjust the frankness and depth of the AI consultant.",
-      "level1": "Level 1: Empathetic Coach",
-      "level1_desc": "Kinder, more motivational responses, focused on building confidence and providing positive guidance.",
-      "level2": "Level 2: Socratic Partner",
-      "level2_desc": "Responses that challenge assumptions with questions, encouraging deep reflection and autonomous discovery.",
-      "level3": "Level 3: Brutal Auditor",
-      "level3_desc": "Direct, no-nonsense, data-driven answers focused on efficiency and the unvarnished truth."
+      "label": "AI Tone",
+      "level1": {
+        "label": "Coach",
+        "desc": "Empathetic and motivational responses."
+      },
+      "level2": {
+        "label": "Socratic",
+        "desc": "Questions that challenge assumptions."
+      },
+      "level3": {
+        "label": "Brutal Clarity",
+        "desc": "Direct, unfiltered feedback."
+      }
+    },
+    "subscription": {
+      "label": "Subscription",
+      "manage": "Manage Subscription"
+    },
+    "logout": {
+      "label": "Sign Out"
     }
   }
 }
