@@ -1,10 +1,18 @@
 import type { FormEvent, KeyboardEvent } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Hash, Loader2, LogOut, MessageSquareMore, Plus, Send, Trash2 } from 'lucide-react'
+import { Hash, Loader2, LogOut, MessageSquareMore, Plus, Send, Trash2, Target, ArrowRight } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { useAuth } from '../auth'
 import type { ChatMessage, SessionSummary } from '../api'
 import { sendConsultoriaMessage } from '../api'
+
+const FOCUS_AREAS = [
+  { id: 'vendas', label: 'Vendas', color: 'text-emerald-400', border: 'border-emerald-500/50', bg: 'bg-emerald-500/10' },
+  { id: 'marketing', label: 'Marketing e Branding', color: 'text-purple-400', border: 'border-purple-500/50', bg: 'bg-purple-500/10' },
+  { id: 'financas', label: 'Finanças e Jurídico', color: 'text-amber-400', border: 'border-amber-500/50', bg: 'bg-amber-500/10' },
+  { id: 'gestao', label: 'Gestão e Estratégia', color: 'text-blue-400', border: 'border-blue-500/50', bg: 'bg-blue-500/10' },
+  { id: 'tecnologia', label: 'Tecnologia e Inovação', color: 'text-indigo-400', border: 'border-indigo-500/50', bg: 'bg-indigo-500/10' },
+]
 
 const SESSIONS_KEY_PREFIX = 'consultoria_sessions_'
 const SESSION_MESSAGES_KEY_PREFIX = 'consultoria_session_messages_'
@@ -74,6 +82,7 @@ export function Chat() {
     messages: [],
   })
   const [input, setInput] = useState('')
+  const [selectedFocus, setSelectedFocus] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingSessions, setIsLoadingSessions] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -147,10 +156,11 @@ export function Chat() {
     }
   }
 
-  async function sendMessage() {
-    if (!userId || !canSend) return
+  async function sendMessage(textOverride?: string, focusOverride?: string) {
+    if (!userId || (!canSend && !textOverride)) return
 
-    const text = input.trim()
+    const text = textOverride || input.trim()
+    const focusToSend = focusOverride !== undefined ? focusOverride : selectedFocus
     const now = new Date().toISOString()
 
     const userMessage: ChatMessage = {
@@ -164,7 +174,7 @@ export function Chat() {
       ...prev,
       messages: [...prev.messages, userMessage],
     }))
-    setInput('')
+    if (!textOverride) setInput('')
     setIsLoading(true)
     setError(null)
 
@@ -174,6 +184,7 @@ export function Chat() {
         conversationId: currentSession.id,
         message: text,
         history: currentSession.messages,
+        focus: focusToSend,
       })
 
       const aiMessage: ChatMessage = {
@@ -237,6 +248,10 @@ export function Chat() {
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     await sendMessage()
+  }
+
+  function handleDeepDive(area: typeof FOCUS_AREAS[0]) {
+    sendMessage(`Gostaria de um aprofundamento específico na área de ${area.label}, complementando a resposta anterior.`, area.label)
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
@@ -404,6 +419,25 @@ export function Chat() {
                     ) : (
                       <div className="prose prose-invert prose-sm max-w-none">
                         <ReactMarkdown>{message.text}</ReactMarkdown>
+                        
+                        <div className="mt-6 pt-4 border-t border-slate-800/50">
+                          <p className="text-[10px] text-slate-500 mb-3 uppercase tracking-wider font-medium flex items-center gap-2">
+                            <Target className="h-3 w-3" />
+                            Aprofundar análise em:
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {FOCUS_AREAS.map((area) => (
+                              <button
+                                key={area.id}
+                                onClick={() => handleDeepDive(area)}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all border ${area.border} ${area.bg} ${area.color} hover:bg-opacity-20 hover:scale-[1.02] active:scale-[0.98]`}
+                              >
+                                {area.label}
+                                <ArrowRight className="h-3 w-3 opacity-50" />
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -424,6 +458,37 @@ export function Chat() {
           </div>
 
           <div className="border-t border-slate-800 bg-slate-950/95 backdrop-blur px-4 md:px-8 py-4">
+            <div className="max-w-3xl mx-auto mb-3 overflow-x-auto no-scrollbar">
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedFocus(null)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
+                    selectedFocus === null
+                      ? 'bg-sky-500/10 text-sky-400 border border-sky-500/50 shadow-[0_0_10px_-3px_rgba(14,165,233,0.3)]'
+                      : 'bg-slate-900/50 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-300'
+                  }`}
+                >
+                  <Target className="h-3 w-3" />
+                  Visão Integrada
+                </button>
+                {FOCUS_AREAS.map((area) => (
+                  <button
+                    key={area.id}
+                    type="button"
+                    onClick={() => setSelectedFocus(selectedFocus === area.label ? null : area.label)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
+                      selectedFocus === area.label
+                        ? `${area.bg} ${area.color} ${area.border} border shadow-sm`
+                        : 'bg-slate-900/50 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-300'
+                    }`}
+                  >
+                    {area.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-2">
               <div className="flex items-end gap-3">
                 <div className="flex-1 rounded-lg border border-slate-800 bg-slate-950/80 px-3 py-2">
