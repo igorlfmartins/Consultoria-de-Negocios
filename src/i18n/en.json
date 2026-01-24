@@ -59,12 +59,10 @@
   "login": {
     "appTitle": "ConsultoriaNegocios",
     "title": "Strategic Consulting Portal",
-    "subtitle": "Access the dashboard to receive real-time strategic analysis and recommendations.",
-    "emailLabel": "Corporate Email",
-    "emailPlaceholder": "firstname.lastname@company.com",
-    "passwordLabel": "Password",
-    "passwordPlaceholder": "Enter your password",
-    "submitButton": "Access Dashboard",
+    "subtitle": "Enter your email to access your account",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@email.com",
+      "submit": "Send Access Link",
     "footer": "This is an AI-powered strategic consulting environment. Do not share confidential information without authorization."
   },
   "settings": {

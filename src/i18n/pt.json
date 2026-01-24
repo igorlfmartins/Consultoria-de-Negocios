@@ -59,12 +59,10 @@
   "login": {
     "appTitle": "ConsultoriaNegocios",
     "title": "Portal de Consultoria Estratégica",
-    "subtitle": "Acesse o painel para receber análises e recomendações estratégicas em tempo real.",
-    "emailLabel": "E-mail corporativo",
-    "emailPlaceholder": "nome.sobrenome@empresa.com",
-    "passwordLabel": "Senha",
-    "passwordPlaceholder": "Digite sua senha",
-    "submitButton": "Acessar Painel",
+    "subtitle": "Entre com seu e-mail para acessar sua conta",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "seu@email.com",
+    "submit": "Enviar Link de Acesso",
     "footer": "Este é um ambiente de consultoria estratégica alimentado por IA. Não compartilhe informações confidenciais sem autorização."
   },
   "settings": {

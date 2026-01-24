@@ -59,12 +59,10 @@
   "login": {
     "appTitle": "ConsultoriaNegocios",
     "title": "Portal de Consultoría Estratégica",
-    "subtitle": "Acceda al panel para recibir análisis y recomendaciones estratégicas en tiempo real.",
-    "emailLabel": "Correo corporativo",
-    "emailPlaceholder": "nombre.apellido@empresa.com",
-    "passwordLabel": "Contraseña",
-    "passwordPlaceholder": "Ingrese su contraseña",
-    "submitButton": "Acceder al Panel",
+    "subtitle": "Ingrese su correo electrónico para acceder a su cuenta",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "submit": "Enviar Enlace de Acceso",
     "footer": "Este es un entorno de consultoría estratégica impulsado por IA. No comparta información confidencial sin autorización."
   },
   "settings": {
