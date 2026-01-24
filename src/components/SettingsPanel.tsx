@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next'
-import { Settings, X, Globe, Zap, Moon, Sun, CreditCard, LogOut } from 'lucide-react'
+import { Settings, X, Globe, Zap, Moon, Sun, CreditCard, LogOut, Lock, Check, AlertCircle, Loader2 } from 'lucide-react'
+import { useState } from 'react'
+import { useAuth } from '../auth'
 
 type SettingsPanelProps = {
   isOpen: boolean
@@ -25,6 +27,24 @@ export function SettingsPanel({
   onSignOut,
 }: SettingsPanelProps) {
   const { t } = useTranslation()
+  const { updatePassword } = useAuth()
+  const [newPassword, setNewPassword] = useState('')
+  const [passwordStatus, setPasswordStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
+
+  async function handleUpdatePassword() {
+    if (!newPassword || newPassword.length < 6) return
+    setPasswordStatus('saving')
+    try {
+      const { error } = await updatePassword(newPassword)
+      if (error) throw error
+      setPasswordStatus('success')
+      setNewPassword('')
+      setTimeout(() => setPasswordStatus('idle'), 3000)
+    } catch (e) {
+      setPasswordStatus('error')
+      setTimeout(() => setPasswordStatus('idle'), 3000)
+    }
+  }
 
   if (!isOpen) return null
 
@@ -42,8 +62,8 @@ export function SettingsPanel({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-        <header className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh]">
+        <header className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 shrink-0">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
             <Settings className="h-5 w-5 text-sky-500" />
             {t('settings.title')}
@@ -53,7 +73,54 @@ export function SettingsPanel({
           </button>
         </header>
 
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 overflow-y-auto">
+          {/* Security / Password */}
+          <div className="space-y-3">
+            <label className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
+              <Lock className="h-4 w-4" />
+              Segurança
+            </label>
+            <div className="space-y-2">
+              <div className="relative">
+                <input
+                  type="password"
+                  placeholder="Definir nova senha"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full pl-3 pr-10 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all"
+                />
+                <button
+                  onClick={handleUpdatePassword}
+                  disabled={!newPassword || newPassword.length < 6 || passwordStatus === 'saving'}
+                  className="absolute right-1 top-1 bottom-1 px-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-md text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                >
+                  {passwordStatus === 'saving' ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : passwordStatus === 'success' ? (
+                    <Check className="h-3 w-3 text-emerald-500" />
+                  ) : passwordStatus === 'error' ? (
+                    <AlertCircle className="h-3 w-3 text-red-500" />
+                  ) : (
+                    'Salvar'
+                  )}
+                </button>
+              </div>
+              {passwordStatus === 'success' && (
+                <p className="text-[10px] text-emerald-500 flex items-center gap-1">
+                  <Check className="h-3 w-3" /> Senha atualizada com sucesso
+                </p>
+              )}
+              {passwordStatus === 'error' && (
+                <p className="text-[10px] text-red-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" /> Erro ao atualizar senha
+                </p>
+              )}
+              <p className="text-[10px] text-slate-400">
+                Mínimo de 6 caracteres. Deixe em branco para manter a atual.
+              </p>
+            </div>
+          </div>
+
           {/* Language */}
           <div className="space-y-3">
             <label className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
@@ -146,7 +213,7 @@ export function SettingsPanel({
           </div>
         </div>
 
-        <footer className="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 space-y-3">
+        <footer className="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 space-y-3 shrink-0">
           <button className="w-full flex items-center justify-center gap-2 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline">
             <CreditCard className="h-4 w-4" />
             {t('settings.subscription.manage')}

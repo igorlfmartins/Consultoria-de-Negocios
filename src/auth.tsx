@@ -7,6 +7,8 @@ type AuthContextValue = {
   session: Session | null
   loading: boolean
   signInWithEmail: (email: string) => Promise<{ error: any }>
+  signInWithPassword: (email: string, password: string) => Promise<{ error: any }>
+  updatePassword: (password: string) => Promise<{ error: any }>
   signOut: () => Promise<{ error: any }>
 }
 
@@ -45,12 +47,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
   }
 
+  async function signInWithPassword(email: string, password: string) {
+    return supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password: password
+    })
+  }
+
+  async function updatePassword(password: string) {
+    return supabase.auth.updateUser({ password })
+  }
+
   async function signOut() {
     return supabase.auth.signOut()
   }
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signInWithEmail, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, signInWithEmail, signInWithPassword, updatePassword, signOut }}>
       {children}
     </AuthContext.Provider>
   )
