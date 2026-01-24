@@ -44,7 +44,7 @@ export async function sendConsultoriaMessage(params: {
     body: JSON.stringify({
       message: params.message,
       history: formattedHistory,
-      focus: params.focus,
+      focus: params.focus || undefined,
       language: params.language,
       toneLevel: params.toneLevel,
     }),
