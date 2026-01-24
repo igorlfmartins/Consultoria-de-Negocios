@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { ChatInput } from '../components/ChatInput'
 import { SettingsPanel } from '../components/SettingsPanel'
 import { Sidebar } from '../components/Sidebar'
+import { LiveMode } from '../components/LiveMode'
 import { useAuth } from '../auth'
 import type { ChatMessage, SessionSummary } from '../api'
 import { sendConsultoriaMessage } from '../api'
@@ -95,6 +96,7 @@ export function Chat() {
   const [language, setLanguage] = useState(i18n.language)
   const [theme, setTheme] = useState<'light' | 'dark'>('dark')
   const [toneLevel, setToneLevel] = useState(3)
+  const [isLiveMode, setIsLiveMode] = useState(false)
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
 
@@ -430,10 +432,18 @@ export function Chat() {
             <ChatInput
               onSendMessage={sendMessage}
               onGenerateReport={handleGenerateReport}
+              onToggleLive={() => setIsLiveMode(true)}
               isLoading={isLoading}
             />
           </div>
         </section>
+
+        {isLiveMode && (
+          <LiveMode 
+            onClose={() => setIsLiveMode(false)}
+            systemInstruction={t('chat.header.aiStatus')} // Fallback or logic to get actual prompt
+          />
+        )}
 
         <SettingsPanel
           isOpen={isSettingsOpen}

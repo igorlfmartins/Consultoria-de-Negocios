@@ -1,14 +1,15 @@
 import { useRef, useState, useEffect, type FormEvent, type KeyboardEvent } from 'react'
-import { FileText, Loader2, Send } from 'lucide-react'
+import { FileText, Loader2, Send, Mic } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void
   onGenerateReport: () => void
+  onToggleLive: () => void
   isLoading: boolean
 }
 
-export function ChatInput({ onSendMessage, onGenerateReport, isLoading }: ChatInputProps) {
+export function ChatInput({ onSendMessage, onGenerateReport, onToggleLive, isLoading }: ChatInputProps) {
   const { t } = useTranslation()
   const [input, setInput] = useState('')
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -53,6 +54,14 @@ export function ChatInput({ onSendMessage, onGenerateReport, isLoading }: ChatIn
             onChange={(event) => setInput(event.target.value)}
             onKeyDown={handleKeyDown}
           />
+          <button
+            type="button"
+            onClick={onToggleLive}
+            className="text-sky-500 hover:text-sky-400 p-1 rounded-md transition-colors"
+            title="Live Mode"
+          >
+            <Mic className="h-4 w-4" />
+          </button>
           <button
             type="button"
             onClick={onGenerateReport}
