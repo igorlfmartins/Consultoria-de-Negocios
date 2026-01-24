@@ -51,8 +51,11 @@ export async function sendConsultoriaMessage(params: {
   })
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}))
-    throw new Error(errorData.reply || errorData.error || 'Falha ao comunicar com o serviço de consultoria')
+    const errorData = await response.json().catch(() => ({}));
+    const errorMessage = typeof errorData.error === 'object' 
+      ? JSON.stringify(errorData.error, null, 2) 
+      : (errorData.reply || errorData.error);
+    throw new Error(errorMessage || 'Falha ao comunicar com o serviço de consultoria');
   }
 
   const data = await response.json()
