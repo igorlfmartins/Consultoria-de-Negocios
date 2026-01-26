@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Settings, X, Globe, Zap, Moon, Sun, CreditCard, LogOut, Lock, Check, AlertCircle, Loader2 } from 'lucide-react'
+import { X, LogOut, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../auth'
 
@@ -30,12 +30,10 @@ export function SettingsPanel({
   const { updatePassword } = useAuth()
   const [newPassword, setNewPassword] = useState('')
   const [passwordStatus, setPasswordStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
-  const [errorMessage, setErrorMessage] = useState('')
 
   async function handleUpdatePassword() {
     if (!newPassword || newPassword.length < 6) return
     setPasswordStatus('saving')
-    setErrorMessage('')
     try {
       const { error } = await updatePassword(newPassword)
       if (error) throw error
@@ -44,195 +42,142 @@ export function SettingsPanel({
       setTimeout(() => setPasswordStatus('idle'), 3000)
     } catch (e: any) {
       console.error('Password update error:', e)
-      setErrorMessage(e?.message || 'Erro ao atualizar senha')
       setPasswordStatus('error')
       setTimeout(() => {
         setPasswordStatus('idle')
-        setErrorMessage('')
       }, 5000)
     }
   }
 
   if (!isOpen) return null
 
-  const TONES = [
-    { level: 1, label: t('settings.tone.level1.label'), desc: t('settings.tone.level1.desc') },
-    { level: 2, label: t('settings.tone.level2.label'), desc: t('settings.tone.level2.desc') },
-    { level: 3, label: t('settings.tone.level3.label'), desc: t('settings.tone.level3.desc') },
-  ]
-
-  const LANGUAGES = [
-    { code: 'en', label: 'English' },
-    { code: 'pt', label: 'Português' },
-    { code: 'es', label: 'Español' },
-  ]
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh]">
-        <header className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 shrink-0">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-            <Settings className="h-5 w-5 text-sky-500" />
-            {t('settings.title')}
-          </h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
-            <X className="h-5 w-5" />
-          </button>
-        </header>
+    <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-navy-950 border-l border-slate-800 shadow-2xl z-50 flex flex-col font-sans bg-grid-pattern">
+      <div className="p-8 border-b border-slate-800 flex items-center justify-between bg-navy-900">
+        <div className="flex flex-col">
+          <p className="text-[10px] font-bold uppercase tracking-geometric text-neon-blue mb-1">Configurações</p>
+          <h2 className="text-xl font-bold text-white tracking-geometric">{t('settings.title')}</h2>
+        </div>
+        <button
+          onClick={onClose}
+          className="p-2 text-slate-500 hover:text-white transition-colors"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
 
-        <div className="p-6 space-y-6 overflow-y-auto">
-          {/* Security / Password */}
+      <div className="flex-1 overflow-y-auto p-8 space-y-10">
+        {/* Language & Theme Section */}
+        <div className="space-y-6">
           <div className="space-y-3">
-            <label className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
-              <Lock className="h-4 w-4" />
-              Segurança
-            </label>
-            <div className="space-y-2">
-              <div className="relative">
-                <input
-                  type="password"
-                  placeholder="Definir nova senha"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full pl-3 pr-10 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all"
-                />
-                <button
-                  onClick={handleUpdatePassword}
-                  disabled={!newPassword || newPassword.length < 6 || passwordStatus === 'saving'}
-                  className="absolute right-1 top-1 bottom-1 px-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-md text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                >
-                  {passwordStatus === 'saving' ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : passwordStatus === 'success' ? (
-                    <Check className="h-3 w-3 text-emerald-500" />
-                  ) : passwordStatus === 'error' ? (
-                    <AlertCircle className="h-3 w-3 text-red-500" />
-                  ) : (
-                    'Salvar'
-                  )}
-                </button>
-              </div>
-              {passwordStatus === 'success' && (
-                <p className="text-[10px] text-emerald-500 flex items-center gap-1">
-                  <Check className="h-3 w-3" /> Senha atualizada com sucesso
-                </p>
-              )}
-              {passwordStatus === 'error' && (
-                <p className="text-[10px] text-red-500 flex items-center gap-1">
-                  <AlertCircle className="h-3 w-3" /> {errorMessage || 'Erro ao atualizar senha'}
-                </p>
-              )}
-              <p className="text-[10px] text-slate-400">
-                Mínimo de 6 caracteres. Deixe em branco para manter a atual.
-              </p>
-            </div>
-          </div>
-
-          {/* Language */}
-          <div className="space-y-3">
-            <label className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
-              <Globe className="h-4 w-4" />
+            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-geometric">
               {t('settings.language.label')}
             </label>
             <div className="grid grid-cols-3 gap-2">
-              {LANGUAGES.map((lang) => (
+              {(['pt', 'en', 'es'] as const).map((lang) => (
                 <button
-                  key={lang.code}
-                  onClick={() => setLanguage(lang.code)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
-                    language === lang.code
-                      ? 'bg-sky-50 dark:bg-sky-500/10 border-sky-200 dark:border-sky-500/50 text-sky-700 dark:text-sky-400'
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'
+                  key={lang}
+                  onClick={() => setLanguage(lang)}
+                  className={`py-3 text-[10px] font-bold uppercase tracking-widest border transition-all ${
+                    language === lang 
+                      ? 'bg-neon-blue/10 border-neon-blue text-neon-blue' 
+                      : 'border-slate-800 text-slate-600 hover:border-slate-700'
                   }`}
                 >
-                  {lang.label}
+                  {lang}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Theme */}
           <div className="space-y-3">
-            <label className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
-              <Moon className="h-4 w-4" />
+            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-geometric">
               {t('settings.theme.label')}
             </label>
             <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => setTheme('light')}
-                className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
-                  theme === 'light'
-                    ? 'bg-sky-50 dark:bg-sky-500/10 border-sky-200 dark:border-sky-500/50 text-sky-700 dark:text-sky-400'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'
-                }`}
-              >
-                <Sun className="h-4 w-4" />
-                {t('settings.theme.light')}
-              </button>
-              <button
-                onClick={() => setTheme('dark')}
-                className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
-                  theme === 'dark'
-                    ? 'bg-sky-50 dark:bg-sky-500/10 border-sky-200 dark:border-sky-500/50 text-sky-700 dark:text-sky-400'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'
-                }`}
-              >
-                <Moon className="h-4 w-4" />
-                {t('settings.theme.dark')}
-              </button>
-            </div>
-          </div>
-
-          {/* Tone Level */}
-          <div className="space-y-3">
-            <label className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
-              <Zap className="h-4 w-4" />
-              {t('settings.tone.label')}
-            </label>
-            <div className="grid grid-cols-1 gap-2">
-              {TONES.map((tone) => (
+              {(['dark', 'light'] as const).map((tMode) => (
                 <button
-                  key={tone.level}
-                  onClick={() => setToneLevel(tone.level)}
-                  className={`flex flex-col items-start text-left px-3 py-2 rounded-lg text-sm border transition-all ${
-                    toneLevel === tone.level
-                      ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/50'
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'
+                  key={tMode}
+                  onClick={() => setTheme(tMode)}
+                  className={`py-3 text-[10px] font-bold uppercase tracking-widest border transition-all ${
+                    theme === tMode 
+                      ? 'bg-neon-magenta/10 border-neon-magenta text-neon-magenta' 
+                      : 'border-slate-800 text-slate-600 hover:border-slate-700'
                   }`}
                 >
-                  <span
-                    className={`font-semibold ${
-                      toneLevel === tone.level ? 'text-emerald-800 dark:text-emerald-300' : 'text-slate-800 dark:text-slate-200'
-                    }`}
-                  >
-                    {tone.label}
-                  </span>
-                  <span
-                    className={`text-xs ${
-                      toneLevel === tone.level ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'
-                    }`}
-                  >
-                    {tone.desc}
-                  </span>
+                  {tMode === 'dark' ? t('settings.theme.dark') : t('settings.theme.light')}
                 </button>
               ))}
             </div>
           </div>
         </div>
 
-        <footer className="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 space-y-3 shrink-0">
-          <button className="w-full flex items-center justify-center gap-2 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline">
-            <CreditCard className="h-4 w-4" />
-            {t('settings.subscription.manage')}
-          </button>
-          <button
-            onClick={onSignOut}
-            className="w-full flex items-center justify-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:underline"
-          >
-            <LogOut className="h-4 w-4" />
-            {t('settings.logout.label')}
-          </button>
-        </footer>
+        {/* Tone Level Section */}
+        <div className="space-y-4">
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-geometric">
+            {t('settings.tone.label')}
+          </label>
+          <div className="space-y-3">
+            {[1, 2, 3].map((level) => (
+              <button
+                key={level}
+                onClick={() => setToneLevel(level as 1 | 2 | 3)}
+                className={`w-full p-4 text-left border transition-all relative group ${
+                  toneLevel === level 
+                    ? 'bg-navy-900 border-neon-blue text-white' 
+                    : 'border-slate-800 text-slate-500 hover:bg-navy-900/50'
+                }`}
+              >
+                {toneLevel === level && (
+                  <div className="absolute top-0 right-0 w-2 h-2 bg-neon-blue" />
+                )}
+                <p className={`text-[11px] font-bold uppercase tracking-geometric mb-1 ${toneLevel === level ? 'text-neon-blue' : ''}`}>
+                  {t(`settings.tone.level${level}.label`)}
+                </p>
+                <p className="text-[10px] leading-relaxed opacity-60">
+                  {t(`settings.tone.level${level}.desc`)}
+                </p>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Password Update Section */}
+        <div className="pt-8 border-t border-slate-800 space-y-4">
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-geometric">
+            Alterar Senha
+          </label>
+          <div className="space-y-3">
+            <input
+              type="password"
+              placeholder="NOVA SENHA"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="input-base"
+            />
+            <button
+              onClick={handleUpdatePassword}
+              disabled={passwordStatus === 'saving' || !newPassword}
+              className="btn-primary w-full py-3"
+            >
+              {passwordStatus === 'saving' ? <Loader2 className="h-4 w-4 animate-spin" /> : 'ATUALIZAR'}
+            </button>
+            {passwordStatus === 'success' && (
+              <p className="text-[10px] text-neon-green font-bold uppercase tracking-widest text-center">Senha atualizada!</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="p-8 bg-navy-900 border-t border-slate-800">
+        <button
+          onClick={onSignOut}
+          className="btn-outline w-full"
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          {t('settings.logout.label')}
+        </button>
       </div>
     </div>
   )

@@ -42,16 +42,17 @@ export function ChatInput({ onSendMessage, onGenerateReport, onToggleLive, isLoa
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-2">
-      <div className="flex items-end gap-3">
-        <div className="flex-1 rounded-lg border border-slate-800 bg-slate-950/80 px-3 py-2 flex items-end gap-2">
+    <form onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-4 pb-8 px-4">
+      <div className="flex flex-col md:flex-row items-stretch md:items-end gap-4">
+        <div className="flex-1 bg-navy-900 border border-slate-800 p-4 relative group focus-within:border-neon-blue transition-colors">
+          <div className="absolute top-0 left-0 w-1 h-4 bg-neon-blue opacity-30" />
           <textarea
             id="chat-input"
             name="message"
             aria-label={t('chat.footer.inputPlaceholder')}
             ref={inputRef}
             rows={1}
-            className="w-full resize-none bg-transparent text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none py-1"
+            className="w-full resize-none bg-transparent text-sm text-white placeholder:text-slate-600 focus:outline-none py-1 leading-relaxed"
             placeholder={t('chat.footer.textareaPlaceholder')}
             value={input}
             onChange={(event) => setInput(event.target.value)}
@@ -59,38 +60,43 @@ export function ChatInput({ onSendMessage, onGenerateReport, onToggleLive, isLoa
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             type="submit"
             disabled={!canSend}
-            className="btn-primary h-10 w-10 md:w-auto md:px-4 md:gap-2 flex-shrink-0 flex items-center justify-center"
+            className="btn-primary flex-1 md:flex-none h-full"
           >
             {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            <span className="hidden md:inline text-xs">{t('chat.footer.send')}</span>
+            <span className="ml-2">{t('chat.footer.send')}</span>
           </button>
 
           <button
             type="button"
             onClick={onToggleLive}
-            className="h-10 w-10 flex items-center justify-center rounded-lg border border-slate-800 bg-slate-950/50 text-sky-500 hover:bg-slate-900 hover:text-sky-400 transition-colors"
+            className="p-4 bg-navy-900 border border-slate-800 text-neon-blue hover:border-neon-blue hover:bg-neon-blue/5 transition-all relative group"
             title="Live Mode"
           >
+            <div className="absolute top-0 right-0 w-2 h-2 bg-neon-blue animate-pulse" />
             <Mic className="h-4 w-4" />
           </button>
           
           <button
             type="button"
             onClick={onGenerateReport}
-            className="h-10 w-10 flex items-center justify-center rounded-lg border border-slate-800 bg-slate-950/50 text-slate-400 hover:bg-slate-900 hover:text-slate-200 transition-colors"
+            className="p-4 bg-navy-900 border border-slate-800 text-slate-500 hover:text-neon-magenta hover:border-neon-magenta hover:bg-neon-magenta/5 transition-all"
             title={t('chat.footer.generateReportTooltip')}
           >
             <FileText className="h-4 w-4" />
           </button>
         </div>
       </div>
-      <p className="text-[10px] text-slate-500">
-        {t('chat.footer.disclaimer')}
-      </p>
+      <div className="flex items-center gap-4">
+        <div className="h-[1px] flex-1 bg-slate-800" />
+        <p className="text-[9px] uppercase tracking-geometric text-slate-600 font-bold whitespace-nowrap">
+          {t('chat.footer.disclaimer')}
+        </p>
+        <div className="h-[1px] flex-1 bg-slate-800" />
+      </div>
     </form>
   )
 }

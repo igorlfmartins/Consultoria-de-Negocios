@@ -226,32 +226,58 @@ export function LiveMode({ onClose, systemInstruction }: LiveModeProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 transition-all duration-500">
+    <div className="fixed inset-0 z-50 bg-navy-950/95 backdrop-blur-2xl flex flex-col items-center justify-center p-6 transition-all duration-500 bg-grid-pattern font-sans">
       <button 
         onClick={onClose}
-        className="absolute top-8 right-8 text-slate-400 hover:text-white p-2 rounded-full hover:bg-slate-900 transition-all"
+        className="absolute top-12 right-12 text-slate-500 hover:text-white p-3 border border-transparent hover:border-slate-800 transition-all"
       >
         <X className="h-6 w-6" />
       </button>
 
-      <div className="w-full max-w-lg flex flex-col items-center space-y-12">
-        <LiveVisualizer isSpeaking={isSpeaking} volume={volume} />
+      <div className="w-full max-w-2xl flex flex-col items-center space-y-16">
+        <div className="relative">
+          <div className="absolute -inset-4 border border-neon-blue/20 animate-pulse" />
+          <div className="absolute -inset-8 border border-neon-magenta/10 animate-pulse delay-75" />
+          <LiveVisualizer isSpeaking={isSpeaking} volume={volume} />
+        </div>
 
-        <div className="flex items-center gap-6">
-          <button
-            onClick={() => setIsMuted(!isMuted)}
-            className={`p-4 rounded-full transition-all ${
-              isMuted ? 'bg-red-500/20 text-red-400' : 'bg-slate-900 text-sky-400 hover:bg-slate-800'
-            }`}
-          >
-            {isMuted ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
-          </button>
-          
-          <div className="px-6 py-3 bg-slate-900 rounded-2xl border border-slate-800">
-             <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Status</p>
-             <p className={`text-sm font-medium ${connectionError ? 'text-red-400' : (isConnected ? 'text-emerald-400' : 'text-amber-400')}`}>
-               {connectionError ? 'Erro de Conexão' : (isConnected ? 'Conectado' : 'Conectando...')}
-             </p>
+        <div className="flex flex-col items-center gap-8 w-full max-w-md">
+          <div className="w-full p-8 bg-navy-900 border border-slate-800 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-8 bg-neon-blue" />
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-[10px] uppercase tracking-geometric text-slate-500 font-bold">Modo Voz</p>
+                <p className={`text-sm font-bold tracking-geometric ${connectionError ? 'text-neon-magenta' : (isConnected ? 'text-neon-green' : 'text-neon-orange')}`}>
+                  {connectionError ? 'ERRO DE CONEXÃO' : (isConnected ? 'SISTEMA ONLINE' : 'INICIALIZANDO...')}
+                </p>
+              </div>
+              
+              <button
+                onClick={() => setIsMuted(!isMuted)}
+                className={`p-5 transition-all border ${
+                  isMuted 
+                    ? 'bg-neon-magenta/10 border-neon-magenta text-neon-magenta shadow-[0_0_15px_rgba(255,0,255,0.2)]' 
+                    : 'bg-navy-950 border-slate-800 text-neon-blue hover:border-neon-blue'
+                }`}
+              >
+                {isMuted ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex gap-4 w-full">
+            <div className="flex-1 h-1 bg-slate-800">
+              <div 
+                className="h-full bg-neon-blue transition-all duration-300" 
+                style={{ width: isConnected ? '100%' : '30%' }} 
+              />
+            </div>
+            <div className="flex-1 h-1 bg-slate-800">
+              <div 
+                className="h-full bg-neon-magenta transition-all duration-300" 
+                style={{ width: isSpeaking ? '100%' : '0%' }} 
+              />
+            </div>
           </div>
         </div>
       </div>

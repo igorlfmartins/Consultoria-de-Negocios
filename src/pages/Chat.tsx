@@ -285,7 +285,7 @@ export function Chat() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex">
+    <div className="min-h-screen bg-navy-950 text-slate-50 flex font-sans bg-grid-pattern">
       <Sidebar
         sessions={sessions}
         currentSessionId={currentSession.id}
@@ -297,25 +297,27 @@ export function Chat() {
         onSignOut={signOut}
       />
 
-      <main className="flex-1 flex flex-col min-w-0 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-        <header className="border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-950/90 backdrop-blur flex items-center justify-between px-6 py-4 transition-colors duration-300">
-          <div className="flex items-center gap-3">
-            <MessageSquareMore className="h-5 w-5 text-sky-500" />
+      <main className="flex-1 flex flex-col min-w-0 bg-transparent transition-colors duration-300">
+        <header className="border-b border-slate-800 bg-navy-950/80 backdrop-blur-md flex items-center justify-between px-8 py-6">
+          <div className="flex items-center gap-4">
+            <div className="p-2 bg-neon-blue/10 border border-neon-blue/20">
+              <MessageSquareMore className="h-5 w-5 text-neon-blue" />
+            </div>
             <div>
-              <h1 className="text-sm font-semibold text-slate-900 dark:text-slate-50">{t('chat.header.title')}</h1>
+              <h1 className="text-lg font-bold text-white tracking-geometric">{t('chat.header.title')}</h1>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest">{t('chat.header.subtitle')}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 text-[10px] uppercase tracking-wider font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded-full">
-              <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          <div className="flex items-center gap-6">
+            <div className="hidden sm:flex items-center gap-3 text-[10px] uppercase tracking-geometric font-bold text-neon-green bg-neon-green/5 border border-neon-green/20 px-4 py-1.5">
+              <span className="inline-flex h-1.5 w-1.5 bg-neon-green shadow-[0_0_8px_rgba(57,255,20,0.8)]" />
               {t('chat.header.aiStatus')}
             </div>
 
             <button
               onClick={() => setIsSettingsOpen(true)}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
-              title={t('chat.header.settings')}
+              className="p-2 text-slate-400 hover:text-neon-magenta hover:bg-neon-magenta/5 border border-transparent hover:border-neon-magenta/20 transition-all"
             >
               <Settings className="h-5 w-5" />
             </button>
@@ -323,21 +325,24 @@ export function Chat() {
         </header>
 
         <section className="flex-1 flex flex-col min-h-0">
-          <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-6">
+          <div className="flex-1 overflow-y-auto px-4 md:px-8 py-8 space-y-8">
             {currentSession.messages.length === 0 && !isLoading && (
-              <div className="max-w-2xl mx-auto rounded-xl border border-dashed border-slate-800 bg-slate-950/60 px-6 py-6 md:px-8 md:py-8">
-                <p className="text-xs uppercase tracking-[0.25em] text-sky-500 mb-3">{t('chat.body.initialBriefing.title')}</p>
-                <h2 className="text-lg font-semibold text-slate-50 mb-3">
+              <div className="max-w-3xl mx-auto card-modular">
+                <p className="text-[10px] uppercase tracking-geometric text-neon-blue mb-4">{t('chat.body.initialBriefing.title')}</p>
+                <h2 className="text-xl font-bold text-white mb-6">
                   {t('chat.body.initialBriefing.heading')}
                 </h2>
-                <p className="text-sm text-slate-400 mb-4">
-                  {t('chat.body.initialBriefing.paragraph')}
-                </p>
-                <ul className="text-xs text-slate-400 space-y-1">
-                  <li>• {t('chat.body.initialBriefing.example1')}</li>
-                  <li>• {t('chat.body.initialBriefing.example2')}</li>
-                  <li>• {t('chat.body.initialBriefing.example3')}</li>
-                </ul>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="p-6 bg-navy-950 border border-slate-800 hover:border-neon-blue transition-colors group">
+                    <p className="text-sm text-slate-400 group-hover:text-white transition-colors">{t('chat.body.initialBriefing.example1')}</p>
+                  </div>
+                  <div className="p-6 bg-navy-950 border border-slate-800 hover:border-neon-magenta transition-colors group">
+                    <p className="text-sm text-slate-400 group-hover:text-white transition-colors">{t('chat.body.initialBriefing.example2')}</p>
+                  </div>
+                  <div className="p-6 bg-navy-950 border border-slate-800 hover:border-neon-green transition-colors group">
+                    <p className="text-sm text-slate-400 group-hover:text-white transition-colors">{t('chat.body.initialBriefing.example3')}</p>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -346,42 +351,47 @@ export function Chat() {
               return (
                 <div key={message.id} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
                   <div
-                    className={`max-w-2xl rounded-lg px-4 py-3 text-sm leading-relaxed ${
+                    className={`max-w-2xl px-6 py-4 text-sm relative ${
                       isUser
-                        ? 'bg-sky-600/90 text-slate-50 shadow-md'
-                        : 'bg-slate-900/90 text-slate-50 border border-slate-800'
+                        ? 'bg-navy-900 border border-slate-800 text-white'
+                        : 'bg-transparent border-l-2 border-neon-blue text-slate-200'
                     }`}
                   >
-                    {!isUser && (
-                      <div className="text-[11px] font-medium text-sky-400 mb-1.5">{t('chat.body.aiMessage.senderName')}</div>
+                    {isUser && (
+                      <div className="absolute top-0 right-0 w-1 h-full bg-neon-magenta opacity-50" />
                     )}
-                    {isUser ? (
-                      <p>{message.text}</p>
-                    ) : (
-                      <div className="prose prose-invert prose-sm max-w-none">
-                        <ReactMarkdown>{message.text}</ReactMarkdown>
-                        
-                        <div className="mt-6 pt-4 border-t border-slate-800/50">
-                          <p className="text-[10px] text-slate-500 mb-3 uppercase tracking-wider font-medium flex items-center gap-2">
-                            <Target className="h-3 w-3" />
-                            {t('chat.body.aiMessage.deepDive')}
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {focusAreas.map((area) => (
-                              <button
-                                key={area.id}
-                                onClick={() => handleDeepDive(area)}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all border ${area.border} ${area.bg} ${area.color} hover:bg-opacity-20 hover:scale-[1.02] active:scale-[0.98]`}
-                              >
-                                {area.label}
-                                <ArrowRight className="h-3 w-3 opacity-50" />
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                    <div className="flex flex-col gap-3">
+                      {!isUser && (
+                        <span className="text-[10px] uppercase tracking-geometric text-neon-blue font-bold">
+                          {t('chat.body.aiMessage.senderName')}
+                        </span>
+                      )}
+                      <ReactMarkdown className="prose prose-invert prose-sm max-w-none">
+                         {message.text}
+                       </ReactMarkdown>
+
+                       {!isUser && (
+                         <div className="mt-8 pt-6 border-t border-slate-800/50">
+                           <p className="text-[9px] text-slate-500 mb-4 uppercase tracking-geometric font-bold flex items-center gap-2">
+                             <Target className="h-3 w-3 text-neon-magenta" />
+                             {t('chat.body.aiMessage.deepDive')}
+                           </p>
+                           <div className="flex flex-wrap gap-3">
+                             {focusAreas.map((area) => (
+                               <button
+                                 key={area.id}
+                                 onClick={() => handleDeepDive(area)}
+                                 className="flex items-center gap-2 px-4 py-2 border border-slate-800 bg-navy-900/50 text-[10px] font-bold uppercase tracking-geometric text-slate-400 hover:border-neon-blue hover:text-white transition-all"
+                               >
+                                 {area.label}
+                                 <ArrowRight className="h-3 w-3 opacity-30" />
+                               </button>
+                             ))}
+                           </div>
+                         </div>
+                       )}
+                     </div>
+                   </div>
                 </div>
               )
             })}

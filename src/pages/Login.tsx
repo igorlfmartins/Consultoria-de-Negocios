@@ -1,12 +1,12 @@
 import type { FormEvent } from 'react'
 import { useState } from 'react'
-import { Mail, CheckCircle, AlertCircle, Loader2, RefreshCw, Lock, ArrowLeft } from 'lucide-react'
+import { Mail, CheckCircle, AlertCircle, Loader2, Lock, ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth'
 
 export function Login() {
   const { t } = useTranslation()
-  const { signInWithEmail, signInWithPassword, signUp, resendSignUp } = useAuth()
+  const { signInWithEmail, signInWithPassword, signUp } = useAuth()
   const [mode, setMode] = useState<'password' | 'magic_link' | 'signup'>('password')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -59,58 +59,46 @@ export function Login() {
     }
   }
 
-  async function handleResendSignUp() {
-    if (!email.trim()) return
-    setLoading(true)
-    try {
-        const { error } = await resendSignUp(email)
-        if (error) {
-             setMessage({ type: 'error', text: error.message || 'Erro ao reenviar e-mail.' })
-        } else {
-             setMessage({ type: 'success', text: 'E-mail de confirmação reenviado!' })
-        }
-    } catch (e: any) {
-        setMessage({ type: 'error', text: e?.message || 'Erro ao reenviar.' })
-    } finally {
-        setLoading(false)
-    }
-  }
-
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     await submitLogin()
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-navy-900 to-slate-900 text-slate-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-xl border border-slate-800 bg-slate-950/80 backdrop-blur-lg shadow-xl px-8 py-10 space-y-8">
-        <div className="space-y-2 text-center">
-          <p className="text-xs uppercase tracking-[0.35em] text-sky-500">{t('login.appTitle')}</p>
-          <h1 className="text-2xl font-semibold text-slate-50">
-            {mode === 'signup' ? 'Criar Conta' : (mode === 'password' ? 'Entrar com Senha' : t('login.title'))}
+    <div className="min-h-screen bg-navy-950 text-slate-50 flex items-center justify-center px-4 font-sans bg-grid-pattern">
+      <div className="w-full max-w-md bg-navy-900 border border-slate-800 p-10 space-y-10 relative overflow-hidden">
+        {/* Geometric Decorative Elements */}
+        <div className="absolute top-0 right-0 w-24 h-24 border-t-2 border-r-2 border-neon-blue opacity-10 -mr-12 -mt-12 rotate-45" />
+        <div className="absolute bottom-0 left-0 w-16 h-1 bg-neon-magenta opacity-20" />
+        
+        <div className="space-y-4 text-center relative z-10">
+          <p className="text-[10px] font-bold uppercase tracking-geometric text-neon-blue">{t('login.appTitle')}</p>
+          <h1 className="text-3xl font-bold text-white tracking-geometric">
+            {mode === 'signup' ? 'CRIAR CONTA' : (mode === 'password' ? 'ENTRAR' : t('login.title').toUpperCase())}
           </h1>
-          <p className="text-sm text-slate-400">
+          <div className="h-1 w-12 bg-neon-magenta mx-auto" />
+          <p className="text-xs text-slate-500 uppercase tracking-widest leading-relaxed">
             {mode === 'signup' ? 'Preencha seus dados para começar' : (mode === 'password' ? 'Digite suas credenciais para acessar' : t('login.subtitle'))}
           </p>
         </div>
 
         {message && (
-          <div className={`p-4 rounded-lg flex items-center gap-3 text-sm ${
-            message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'
+          <div className={`p-5 rounded-none flex items-center gap-4 text-xs font-bold uppercase tracking-widest ${
+            message.type === 'success' ? 'bg-neon-green/5 text-neon-green border border-neon-green/20' : 'bg-neon-magenta/5 text-neon-magenta border border-neon-magenta/20'
           }`}>
             {message.type === 'success' ? <CheckCircle className="h-5 w-5 shrink-0" /> : <AlertCircle className="h-5 w-5 shrink-0" />}
             <span>{message.text}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
-            <div className="space-y-1">
-              <label htmlFor="email" className="text-sm font-medium text-slate-200">
+        <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-[10px] font-bold text-slate-500 uppercase tracking-geometric">
                 {t('login.emailLabel')}
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-600">
                   <Mail className="h-4 w-4" />
                 </span>
                 <input
@@ -118,8 +106,8 @@ export function Login() {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  className="input-base pl-9"
-                  placeholder={t('login.emailPlaceholder')}
+                  className="input-base pl-12"
+                  placeholder={t('login.emailPlaceholder').toUpperCase()}
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   disabled={loading || (mode === 'magic_link' && message?.type === 'success')}
@@ -128,12 +116,12 @@ export function Login() {
             </div>
 
             {(mode === 'password' || mode === 'signup') && (
-              <div className="space-y-1">
-                <label htmlFor="password" className="text-sm font-medium text-slate-200">
-                  Senha
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-[10px] font-bold text-slate-500 uppercase tracking-geometric">
+                  SENHA
                 </label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-600">
                     <Lock className="h-4 w-4" />
                   </span>
                   <input
@@ -141,8 +129,8 @@ export function Login() {
                     name="password"
                     type="password"
                     autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-                    className="input-base pl-9"
-                    placeholder="Sua senha segura"
+                    className="input-base pl-12"
+                    placeholder="SUA SENHA SEGURA"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                     disabled={loading}
@@ -154,53 +142,25 @@ export function Login() {
 
           <button 
             type="submit" 
-            className="btn-primary w-full flex items-center justify-center gap-2"
+            className="btn-primary w-full py-4"
             disabled={loading || (mode === 'magic_link' && message?.type === 'success')}
           >
-            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-            {mode === 'signup' ? 'Cadastrar' : (mode === 'magic_link' && message?.type === 'success' ? 'Link Enviado' : (mode === 'password' ? 'Entrar' : 'Receber Link de Acesso'))}
+            {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+            {mode === 'signup' ? 'CADASTRAR' : (mode === 'magic_link' && message?.type === 'success' ? 'LINK ENVIADO' : (mode === 'password' ? 'ENTRAR' : 'RECEBER LINK'))}
           </button>
 
-          {mode === 'magic_link' && message?.type === 'success' && (
-            <div className="space-y-3 pt-2 animate-in fade-in slide-in-from-top-2">
-              <button
-                type="button"
-                onClick={submitLogin}
-                disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors text-sm font-medium border border-slate-700"
-              >
-                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                Enviar novo link
-              </button>
-            </div>
-          )}
-
-          {((mode === 'signup' && message?.type === 'success') || (message?.text === 'E-mail não confirmado.')) && (
-            <div className="space-y-3 pt-2 animate-in fade-in slide-in-from-top-2">
-              <button
-                type="button"
-                onClick={handleResendSignUp}
-                disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors text-sm font-medium border border-slate-700"
-              >
-                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                Reenviar e-mail de confirmação
-              </button>
-            </div>
-          )}
-          
-          <div className="pt-2 border-t border-slate-800 space-y-3">
+          <div className="pt-8 border-t border-slate-800 space-y-4">
              {mode === 'password' && (
-               <div className="flex flex-col gap-2">
+               <div className="flex flex-col gap-3">
                  <button
                     type="button"
                     onClick={() => {
                       setMode('magic_link')
                       setMessage(null)
                     }}
-                    className="w-full text-sm text-slate-400 hover:text-sky-400 transition-colors"
+                    className="w-full text-[10px] font-bold text-slate-500 hover:text-neon-blue uppercase tracking-geometric transition-colors"
                   >
-                    Esqueci minha senha / Entrar sem senha
+                    Entrar sem senha
                   </button>
                   <button
                     type="button"
@@ -208,9 +168,9 @@ export function Login() {
                       setMode('signup')
                       setMessage(null)
                     }}
-                    className="w-full text-sm text-slate-400 hover:text-sky-400 transition-colors font-medium"
+                    className="w-full text-[10px] font-bold text-slate-500 hover:text-neon-magenta uppercase tracking-geometric transition-colors"
                   >
-                    Não tem conta? Cadastre-se
+                    Criar nova conta
                   </button>
                </div>
              )}
@@ -222,10 +182,10 @@ export function Login() {
                     setMode('password')
                     setMessage(null)
                   }}
-                  className="w-full text-sm text-slate-400 hover:text-sky-400 transition-colors flex items-center justify-center gap-2"
+                  className="w-full text-[10px] font-bold text-slate-500 hover:text-neon-blue uppercase tracking-geometric transition-colors flex items-center justify-center gap-2"
                 >
                   <ArrowLeft className="h-3 w-3" />
-                  <span>Voltar para login com senha</span>
+                  <span>Voltar para senha</span>
                 </button>
              )}
 
@@ -236,7 +196,7 @@ export function Login() {
                     setMode('password')
                     setMessage(null)
                   }}
-                  className="w-full text-sm text-slate-400 hover:text-sky-400 transition-colors flex items-center justify-center gap-2"
+                  className="w-full text-[10px] font-bold text-slate-500 hover:text-neon-blue uppercase tracking-geometric transition-colors flex items-center justify-center gap-2"
                 >
                   <ArrowLeft className="h-3 w-3" />
                   <span>Já tem conta? Entrar</span>
@@ -245,7 +205,7 @@ export function Login() {
           </div>
         </form>
 
-        <p className="text-[11px] text-slate-500 text-center leading-relaxed">
+        <p className="text-[9px] text-slate-600 text-center leading-loose uppercase tracking-widest font-bold opacity-50">
           {t('login.footer')}
         </p>
       </div>
