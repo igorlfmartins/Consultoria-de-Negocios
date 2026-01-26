@@ -13,14 +13,90 @@ export function LiveMode({ onClose, systemInstruction }: LiveModeProps) {
   const [volume, setVolume] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   
   const wsRef = useRef<WebSocket | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const processorRef = useRef<ScriptProcessorNode | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const audioQueue = useRef<Int16Array[]>([]);
   const isPlayingRef = useRef(false);
 
+  // 1. Initialize Microphone immediately on mount
+  useEffect(() => {
+    let mounted = true;
+
+    const initMicrophone = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        if (!mounted) {
+            stream.getTracks().forEach(track => track.stop());
+            return;
+        }
+        streamRef.current = stream;
+        
+        if (!audioContextRef.current) {
+          audioContextRef.current = new AudioContext({ sampleRate: 16000 });
+        }
+
+        sourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
+        processorRef.current = audioContextRef.current.createScriptProcessor(4096, 1, 1);
+        
+        sourceRef.current.connect(processorRef.current);
+        processorRef.current.connect(audioContextRef.current.destination);
+
+        processorRef.current.onaudioprocess = (e) => {
+          if (!mounted) return;
+          
+          const inputData = e.inputBuffer.getChannelData(0);
+          
+          // Calculate volume for visualizer
+          let sum = 0;
+          for (let i = 0; i < inputData.length; i++) {
+            sum += inputData[i] * inputData[i];
+          }
+          setVolume(Math.sqrt(sum / inputData.length));
+
+          // Only send if connected, not muted, and WS is open
+          if (isMuted || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
+
+          // Convert to PCM 16-bit
+          const pcm16 = new Int16Array(inputData.length);
+          for (let i = 0; i < inputData.length; i++) {
+            pcm16[i] = Math.max(-1, Math.min(1, inputData[i])) * 0x7FFF;
+          }
+
+          const base64 = btoa(String.fromCharCode(...new Uint8Array(pcm16.buffer)));
+          wsRef.current.send(JSON.stringify({
+            realtime_input: {
+              media_chunks: [{
+                mime_type: "audio/pcm;rate=16000",
+                data: base64
+              }]
+            }
+          }));
+        };
+
+      } catch (err: any) {
+        console.error('Error accessing microphone:', err);
+        if (mounted) setConnectionError("Permissão de microfone negada");
+      }
+    };
+
+    initMicrophone();
+
+    return () => {
+      mounted = false;
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      sourceRef.current?.disconnect();
+      processorRef.current?.disconnect();
+    };
+  }, [isMuted]); // Re-bind if muted changes (though logical check is inside callback, this is fine)
+
+  // 2. Initialize WebSocket
   useEffect(() => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const host = window.location.host;
@@ -29,6 +105,7 @@ export function LiveMode({ onClose, systemInstruction }: LiveModeProps) {
 
     ws.onopen = () => {
       setIsConnected(true);
+      setConnectionError(null);
       // Send initial setup
       ws.send(JSON.stringify({
         setup: {
@@ -47,34 +124,45 @@ export function LiveMode({ onClose, systemInstruction }: LiveModeProps) {
     };
 
     ws.onmessage = async (event) => {
-      const data = JSON.parse(event.data);
-      
-      if (data.serverContent?.modelTurn?.parts) {
-        for (const part of data.serverContent.modelTurn.parts) {
-          if (part.inlineData?.mimeType === 'audio/pcm;rate=16000') {
-            const base64Audio = part.inlineData.data;
-            const binaryString = atob(base64Audio);
-            const bytes = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
-              bytes[i] = binaryString.charCodeAt(i);
-            }
-            const pcm16 = new Int16Array(bytes.buffer);
-            audioQueue.current.push(pcm16);
-            if (!isPlayingRef.current) {
-              playNextChunk();
+      try {
+        const data = JSON.parse(event.data);
+        
+        if (data.serverContent?.modelTurn?.parts) {
+          for (const part of data.serverContent.modelTurn.parts) {
+            if (part.inlineData?.mimeType === 'audio/pcm;rate=16000') {
+              const base64Audio = part.inlineData.data;
+              const binaryString = atob(base64Audio);
+              const bytes = new Uint8Array(binaryString.length);
+              for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+              }
+              const pcm16 = new Int16Array(bytes.buffer);
+              audioQueue.current.push(pcm16);
+              if (!isPlayingRef.current) {
+                playNextChunk();
+              }
             }
           }
         }
+      } catch (e) {
+        console.error("Error parsing websocket message", e);
       }
     };
 
-    ws.onclose = () => setIsConnected(false);
+    ws.onerror = (error) => {
+      console.error("WebSocket Error:", error);
+      setIsConnected(false);
+      setConnectionError("Erro de conexão com o servidor");
+    };
+
+    ws.onclose = () => {
+      setIsConnected(false);
+    };
 
     return () => {
       ws.close();
-      stopRecording();
     };
-  }, []);
+  }, [systemInstruction]);
 
   const playNextChunk = async () => {
     if (audioQueue.current.length === 0) {
@@ -109,67 +197,6 @@ export function LiveMode({ onClose, systemInstruction }: LiveModeProps) {
     source.start();
   };
 
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      if (!audioContextRef.current) {
-        audioContextRef.current = new AudioContext({ sampleRate: 16000 });
-      }
-
-      sourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
-      processorRef.current = audioContextRef.current.createScriptProcessor(4096, 1, 1);
-
-      processorRef.current.onaudioprocess = (e) => {
-        if (isMuted) return;
-        
-        const inputData = e.inputBuffer.getChannelData(0);
-        
-        // Calculate volume for visualizer
-        let sum = 0;
-        for (let i = 0; i < inputData.length; i++) {
-          sum += inputData[i] * inputData[i];
-        }
-        setVolume(Math.sqrt(sum / inputData.length));
-
-        // Convert to PCM 16-bit
-        const pcm16 = new Int16Array(inputData.length);
-        for (let i = 0; i < inputData.length; i++) {
-          pcm16[i] = Math.max(-1, Math.min(1, inputData[i])) * 0x7FFF;
-        }
-
-        // Send to WebSocket
-        if (wsRef.current?.readyState === WebSocket.OPEN) {
-          const base64 = btoa(String.fromCharCode(...new Uint8Array(pcm16.buffer)));
-          wsRef.current.send(JSON.stringify({
-            realtime_input: {
-              media_chunks: [{
-                mime_type: "audio/pcm;rate=16000",
-                data: base64
-              }]
-            }
-          }));
-        }
-      };
-
-      sourceRef.current.connect(processorRef.current);
-      processorRef.current.connect(audioContextRef.current.destination);
-    } catch (err) {
-      console.error('Error accessing microphone:', err);
-    }
-  };
-
-  const stopRecording = () => {
-    sourceRef.current?.disconnect();
-    processorRef.current?.disconnect();
-  };
-
-  useEffect(() => {
-    if (isConnected) {
-      startRecording();
-    }
-    return () => stopRecording();
-  }, [isConnected]);
-
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 transition-all duration-500">
       <button 
@@ -194,8 +221,8 @@ export function LiveMode({ onClose, systemInstruction }: LiveModeProps) {
           
           <div className="px-6 py-3 bg-slate-900 rounded-2xl border border-slate-800">
              <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Status</p>
-             <p className={`text-sm font-medium ${isConnected ? 'text-emerald-400' : 'text-amber-400'}`}>
-               {isConnected ? 'Conectado' : 'Conectando...'}
+             <p className={`text-sm font-medium ${connectionError ? 'text-red-400' : (isConnected ? 'text-emerald-400' : 'text-amber-400')}`}>
+               {connectionError ? 'Erro de Conexão' : (isConnected ? 'Conectado' : 'Conectando...')}
              </p>
           </div>
         </div>
