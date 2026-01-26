@@ -26,6 +26,8 @@ export function LiveMode({ onClose, systemInstruction }: LiveModeProps) {
   const audioQueue = useRef<Int16Array[]>([]);
   const isPlayingRef = useRef(false);
 
+  const [debugUrl, setDebugUrl] = useState<string>('');
+
   // 1. Initialize Microphone immediately on mount
   useEffect(() => {
     let mounted = true;
@@ -109,6 +111,11 @@ export function LiveMode({ onClose, systemInstruction }: LiveModeProps) {
 
   useEffect(() => {
     const getWebSocketUrl = () => {
+      // Force Production URL for debugging if on Railway (heuristic: hostname contains 'railway')
+      if (window.location.hostname.includes('railway.app')) {
+        return 'wss://consultoria-backend.up.railway.app/api/live';
+      }
+
       // 1. Prioritize Runtime Env (set by Docker/Railway at runtime)
       // @ts-ignore
       if (window.ENV?.VITE_API_URL) {
@@ -142,8 +149,10 @@ export function LiveMode({ onClose, systemInstruction }: LiveModeProps) {
       return `${protocol}//${host}/api/live`;
     };
 
-    console.log("Connecting to WS URL:", getWebSocketUrl());
-    const ws = new WebSocket(getWebSocketUrl());
+    const url = getWebSocketUrl();
+    setDebugUrl(url);
+    console.log("Connecting to WS URL:", url);
+    const ws = new WebSocket(url);
     wsRef.current = ws;
     setConnectionStatus("Conectando ao Socket...");
 
@@ -203,9 +212,16 @@ export function LiveMode({ onClose, systemInstruction }: LiveModeProps) {
       setConnectionStatus("Erro no Socket");
     };
 
-    ws.onclose = () => {
+    ws.onclose = (event) => {
+      console.log('WS Close Event:', event);
       setIsConnected(false);
-      setConnectionStatus("Socket Fechado");
+      if (event.code === 1006) {
+        setConnectionStatus("Erro: 1006 (Abnormal)");
+      } else if (event.code === 1011) {
+        setConnectionStatus("Erro: Servidor (1011)");
+      } else {
+        setConnectionStatus(`Fechado (${event.code})`);
+      }
     };
 
     return () => {
@@ -277,6 +293,9 @@ export function LiveMode({ onClose, systemInstruction }: LiveModeProps) {
                 }`}>
                   {connectionStatus.toUpperCase()}
                 </p>
+                {connectionStatus !== 'Sistema Online' && (
+                   <p className="text-[9px] text-slate-600 font-mono break-all max-w-[200px]">{debugUrl}</p>
+                )}
               </div>
               
               <button
