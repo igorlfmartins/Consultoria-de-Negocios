@@ -96,24 +96,25 @@ export function LiveMode({ onClose, systemInstruction }: LiveModeProps) {
     };
   }, [isMuted]); // Re-bind if muted changes (though logical check is inside callback, this is fine)
 
-  // 2. Initialize WebSocket
   useEffect(() => {
-    // Determine the correct WebSocket URL based on environment
     const getWebSocketUrl = () => {
-      // If VITE_API_URL is set (production), use it
       const apiUrl = import.meta.env.VITE_API_URL;
       
       if (apiUrl) {
-        // Replace http/https with ws/wss
-        let wsUrl = apiUrl.replace(/^http/, 'ws');
-        // Remove trailing slash if present
-        if (wsUrl.endsWith('/')) {
-          wsUrl = wsUrl.slice(0, -1);
+        try {
+          const url = new URL(apiUrl);
+          const protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+          const host = url.host;
+          return `${protocol}//${host}/api/live`;
+        } catch {
+          let wsUrl = apiUrl.replace(/^http/, 'ws');
+          if (wsUrl.endsWith('/')) {
+            wsUrl = wsUrl.slice(0, -1);
+          }
+          return `${wsUrl}/api/live`;
         }
-        return `${wsUrl}/api/live`;
       }
       
-      // Fallback to current host (for local development with proxy)
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const host = window.location.host;
       return `${protocol}//${host}/api/live`;
