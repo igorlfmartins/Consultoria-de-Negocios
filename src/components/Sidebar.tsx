@@ -30,8 +30,8 @@ export function Sidebar({
       <div className="px-6 pt-8 pb-6 border-b border-slate-800">
         <div className="mb-8 relative">
           <div className="absolute -left-6 top-0 w-1 h-8 bg-neon-blue" />
-          <p className="text-[10px] font-bold uppercase tracking-geometric text-neon-blue mb-1">{t('chat.sidebar.header')}</p>
-          <h2 className="text-xl font-bold text-white tracking-geometric">{t('chat.sidebar.subHeader')}</h2>
+          <p className="text-[10px] font-bold uppercase tracking-geometric text-neon-blue mb-1 font-mono">{t('chat.sidebar.header')}</p>
+          <h2 className="text-xl font-bold text-white tracking-geometric font-mono">{t('chat.sidebar.subHeader')}</h2>
         </div>
 
         <button

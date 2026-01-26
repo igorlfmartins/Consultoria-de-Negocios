@@ -304,7 +304,7 @@ export function Chat() {
               <MessageSquareMore className="h-5 w-5 text-neon-blue" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-white tracking-geometric">{t('chat.header.title')}</h1>
+              <h1 className="text-lg font-bold text-white tracking-geometric font-mono">{t('chat.header.title')}</h1>
               <p className="text-[10px] text-slate-500 uppercase tracking-widest">{t('chat.header.subtitle')}</p>
             </div>
           </div>
@@ -328,8 +328,8 @@ export function Chat() {
           <div className="flex-1 overflow-y-auto px-4 md:px-8 py-8 space-y-8">
             {currentSession.messages.length === 0 && !isLoading && (
               <div className="max-w-3xl mx-auto card-modular">
-                <p className="text-[10px] uppercase tracking-geometric text-neon-blue mb-4">{t('chat.body.initialBriefing.title')}</p>
-                <h2 className="text-xl font-bold text-white mb-6">
+                <p className="text-[10px] uppercase tracking-geometric text-neon-blue mb-4 font-mono">{t('chat.body.initialBriefing.title')}</p>
+                <h2 className="text-xl font-bold text-white mb-6 font-mono">
                   {t('chat.body.initialBriefing.heading')}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

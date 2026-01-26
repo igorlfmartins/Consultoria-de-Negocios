@@ -6,6 +6,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif'],
+        mono: ['Space Mono', 'monospace'],
       },
       colors: {
         neon: {

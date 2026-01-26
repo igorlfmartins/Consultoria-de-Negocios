@@ -72,8 +72,8 @@ export function Login() {
         <div className="absolute bottom-0 left-0 w-16 h-1 bg-neon-magenta opacity-20" />
         
         <div className="space-y-4 text-center relative z-10">
-          <p className="text-[10px] font-bold uppercase tracking-geometric text-neon-blue">{t('login.appTitle')}</p>
-          <h1 className="text-3xl font-bold text-white tracking-geometric">
+          <p className="text-[10px] font-bold uppercase tracking-geometric text-neon-blue font-mono">{t('login.appTitle')}</p>
+          <h1 className="text-3xl font-bold text-white tracking-geometric font-mono">
             {mode === 'signup' ? 'CRIAR CONTA' : (mode === 'password' ? 'ENTRAR' : t('login.title').toUpperCase())}
           </h1>
           <div className="h-1 w-12 bg-neon-magenta mx-auto" />
