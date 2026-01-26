@@ -46,6 +46,9 @@ export function ChatInput({ onSendMessage, onGenerateReport, onToggleLive, isLoa
       <div className="flex items-end gap-3">
         <div className="flex-1 rounded-lg border border-slate-800 bg-slate-950/80 px-3 py-2 flex items-end gap-2">
           <textarea
+            id="chat-input"
+            name="message"
+            aria-label={t('chat.footer.inputPlaceholder')}
             ref={inputRef}
             rows={1}
             className="w-full resize-none bg-transparent text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none py-1"

@@ -115,6 +115,7 @@ export function Login() {
                 </span>
                 <input
                   id="email"
+                  name="email"
                   type="email"
                   autoComplete="email"
                   className="input-base pl-9"
@@ -137,6 +138,7 @@ export function Login() {
                   </span>
                   <input
                     id="password"
+                    name="password"
                     type="password"
                     autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
                     className="input-base pl-9"
