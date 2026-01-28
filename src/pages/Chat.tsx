@@ -67,8 +67,8 @@ export function Chat() {
   }
 
   return (
-    <div className="h-screen bg-bio-white text-bio-deep dark:bg-bio-deep dark:text-bio-white flex font-sans overflow-hidden">
-      <div className="flex-1 flex max-w-[1920px] mx-auto w-full border-x border-bio-deep/10 dark:border-bio-white/10 bg-bio-white dark:bg-bio-deep relative">
+    <div className="h-screen bg-bio-deep/5 text-bio-deep dark:bg-bio-deep dark:text-bio-white flex font-sans overflow-hidden">
+      <div className="flex-1 flex max-w-[1920px] mx-auto w-full border-x border-bio-deep/10 dark:border-bio-white/10 bg-bio-deep/5 dark:bg-bio-deep relative">
         <Sidebar
           sessions={sessions}
           currentSessionId={currentSession.id}
@@ -92,7 +92,7 @@ export function Chat() {
           />
         )}
 
-        <main className="flex-1 flex flex-col min-w-0 bg-bio-white dark:bg-bio-deep relative">
+        <main className="flex-1 flex flex-col min-w-0 bg-bio-deep/5 dark:bg-bio-deep relative">
           <header className="h-16 sm:h-20 bg-bio-teal flex items-center justify-between px-4 sm:px-6 md:px-8 border-b-4 border-bio-deep dark:border-bio-white/10">
             <div className="flex items-center gap-4">
               <button
@@ -155,7 +155,7 @@ export function Chat() {
                         className={`max-w-3xl p-6 md:p-8 text-base font-medium relative ${
                           isUser
                             ? 'bg-bio-deep text-bio-white dark:bg-bio-white dark:text-bio-deep ml-4 sm:ml-12'
-                            : 'bg-bio-white dark:bg-bio-deep/80 border border-bio-deep/10 dark:border-bio-white/10 text-bio-deep dark:text-bio-white mr-4 sm:mr-12'
+                            : 'bg-white dark:bg-bio-deep/80 border border-bio-deep/10 dark:border-bio-white/10 text-bio-deep dark:text-bio-white mr-4 sm:mr-12'
                         }`}
                       >
                         <div className="absolute -top-3 left-6 px-2 bg-inherit">
@@ -201,7 +201,7 @@ export function Chat() {
               </div>
             </div>
 
-            <div className="bg-bio-white border-t border-bio-deep/10 dark:bg-bio-deep dark:border-bio-white/10">
+            <div className="bg-bio-deep/5 border-t border-bio-deep/10 dark:bg-bio-deep dark:border-bio-white/10">
               <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 md:px-8 py-4">
                 <div className="mb-4 flex gap-2 overflow-x-auto pb-2 no-scrollbar">
                   {focusAreas.map((area) => (

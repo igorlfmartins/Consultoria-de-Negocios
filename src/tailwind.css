@@ -11,7 +11,7 @@
   }
 
   body {
-    @apply bg-bio-white text-bio-deep font-sans antialiased tracking-wide leading-relaxed-geo;
+    @apply bg-bio-deep/5 text-bio-deep font-sans antialiased tracking-wide leading-relaxed-geo;
   }
   .dark body {
     @apply bg-bio-deep text-bio-white;

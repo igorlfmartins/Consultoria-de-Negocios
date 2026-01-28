@@ -38,7 +38,7 @@ export function ChatInput({ input, setInput, onSubmit, onGenerateReport, onToggl
   return (
     <form onSubmit={onSubmit} className="w-full space-y-4">
       <div className="flex flex-col md:flex-row items-stretch gap-4">
-        <div className="flex-1 bg-bio-deep/5 dark:bg-bio-white/5 border-2 border-bio-deep/10 dark:border-bio-white/20 p-4 relative group focus-within:border-bio-teal dark:focus-within:border-bio-lime transition-colors flex items-center">
+        <div className="flex-1 bg-white dark:bg-bio-white/5 border-2 border-bio-deep/10 dark:border-bio-white/20 p-4 relative group focus-within:border-bio-teal dark:focus-within:border-bio-lime transition-colors flex items-center">
           <div className="absolute top-0 left-0 w-1 h-4 bg-bio-teal dark:bg-bio-lime opacity-30" />
           <textarea
             id="chat-input"
@@ -67,7 +67,7 @@ export function ChatInput({ input, setInput, onSubmit, onGenerateReport, onToggl
           <button
             type="button"
             onClick={onToggleLive}
-            className="h-full px-4 bg-bio-white border-2 border-bio-deep/10 text-bio-deep dark:bg-bio-white/5 dark:border-bio-white/20 dark:text-bio-white hover:border-bio-lime hover:bg-bio-lime/10 dark:hover:bg-bio-white/10 transition-all relative group flex items-center justify-center"
+            className="h-full px-4 bg-white border-2 border-bio-deep/10 text-bio-deep dark:bg-bio-white/5 dark:border-bio-white/20 dark:text-bio-white hover:border-bio-lime hover:bg-bio-lime/10 dark:hover:bg-bio-white/10 transition-all relative group flex items-center justify-center"
             title="Live Mode"
           >
             <div className="absolute top-0 right-0 w-2 h-2 bg-bio-lime animate-pulse" />
@@ -77,7 +77,7 @@ export function ChatInput({ input, setInput, onSubmit, onGenerateReport, onToggl
           <button
             type="button"
             onClick={onGenerateReport}
-            className="h-full px-4 bg-bio-white border-2 border-bio-deep/10 text-bio-deep/60 dark:bg-bio-white/5 dark:border-bio-white/20 dark:text-bio-white/60 hover:text-bio-purple hover:border-bio-purple hover:bg-bio-purple/10 dark:hover:text-bio-white transition-all flex items-center justify-center"
+            className="h-full px-4 bg-white border-2 border-bio-deep/10 text-bio-deep/60 dark:bg-bio-white/5 dark:border-bio-white/20 dark:text-bio-white/60 hover:text-bio-purple hover:border-bio-purple hover:bg-bio-purple/10 dark:hover:text-bio-white transition-all flex items-center justify-center"
             title={t('chat.footer.generateReportTooltip')}
           >
             <FileText className="h-4 w-4" />
