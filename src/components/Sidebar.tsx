@@ -11,6 +11,8 @@ interface SidebarProps {
   onSelectSession: (session: SessionSummary) => void
   onDeleteSession: (sessionId: string, e: React.MouseEvent) => void
   userId: string | null
+  userEmail?: string | null
+  userName?: string | null
   onSignOut: () => void
   isMobileOpen: boolean
   onCloseMobile: () => void
@@ -24,6 +26,8 @@ export function Sidebar({
   onSelectSession,
   onDeleteSession,
   userId,
+  userEmail,
+  userName,
   onSignOut,
   isMobileOpen,
   onCloseMobile,
@@ -141,7 +145,9 @@ export function Sidebar({
         <div className="flex items-center justify-between">
           {!isCollapsed && (
             <div className="flex flex-col">
-              <span className="text-xs font-bold text-bio-deep dark:text-bio-white tracking-tight font-mono truncate max-w-[150px]">{userId}</span>
+              <span className="text-xs font-bold text-bio-deep dark:text-bio-white tracking-tight font-mono truncate max-w-[150px]" title={userEmail || userId || ''}>
+                {userName || userEmail || userId}
+              </span>
               <span className="text-[10px] text-bio-lime uppercase tracking-widest font-mono">{t('chat.sidebar.userAccessLevel')}</span>
             </div>
           )}
