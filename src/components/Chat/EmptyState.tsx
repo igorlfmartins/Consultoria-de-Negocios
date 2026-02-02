@@ -5,7 +5,7 @@ export function EmptyState() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mt-8">
-      <div className="md:col-span-12 bg-white dark:bg-bio-deep p-8 md:p-12 flex flex-col justify-between min-h-[300px] relative overflow-hidden group">
+      <div className="md:col-span-12 bg-bio-deep/5 dark:bg-bio-deep p-8 md:p-12 flex flex-col justify-between min-h-[300px] relative overflow-hidden group">
         <div>
           <p className="text-xs font-bold text-bio-lime uppercase tracking-widest mb-4 font-mono">
             {t('chat.body.initialBriefing.title')}
