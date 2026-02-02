@@ -202,6 +202,12 @@ export function useLiveAudio({ systemInstruction, token }: UseLiveAudioProps) {
       if (token) {
         return `${baseUrl}?token=${encodeURIComponent(token)}`;
       }
+      
+      // Safety fix for old backend URL
+      if (baseUrl.includes('consultoria-backend.up.railway.app')) {
+        baseUrl = baseUrl.replace('consultoria-backend.up.railway.app', 'clarity-machine-backend.up.railway.app');
+      }
+
       return baseUrl;
     };
 
