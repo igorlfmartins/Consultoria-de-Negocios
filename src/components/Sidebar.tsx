@@ -36,8 +36,8 @@ export function Sidebar({
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   return (
-    <aside className={`fixed md:static inset-y-0 left-0 z-40 flex flex-col border-r-4 border-bio-teal bg-white dark:bg-bio-deep text-bio-deep dark:text-bio-white transition-transform duration-300 ease-in-out ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 w-80 ${isCollapsed ? 'md:w-20' : 'md:w-80'}`}>
-      <div className={`bg-white dark:bg-bio-deep relative overflow-hidden group flex flex-col ${isCollapsed ? 'p-4 items-center' : 'p-6 md:p-8'}`}>
+    <aside className={`fixed md:static inset-y-0 left-0 z-40 flex flex-col border-r-4 border-bio-teal bg-bio-deep/5 dark:bg-bio-deep text-bio-deep dark:text-bio-white transition-transform duration-300 ease-in-out ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 w-80 ${isCollapsed ? 'md:w-20' : 'md:w-80'}`}>
+      <div className={`bg-bio-deep/5 dark:bg-bio-deep relative overflow-hidden group flex flex-col ${isCollapsed ? 'p-4 items-center' : 'p-6 md:p-8'}`}>
         <div className="relative z-10 flex justify-end items-start w-full">
           <div className={`flex items-center gap-2 ${isCollapsed ? 'mx-auto' : ''}`}>
             <button
@@ -70,7 +70,7 @@ export function Sidebar({
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-white dark:bg-bio-deep scrollbar-thin">
+      <div className="flex-1 overflow-y-auto bg-bio-deep/5 dark:bg-bio-deep scrollbar-thin">
         <div className={`flex items-center border-b border-bio-white/10 dark:border-bio-white/10 ${isCollapsed ? 'justify-center py-4 px-0' : 'justify-between px-8 py-4'}`}>
           {!isCollapsed && (
             <span className="text-[10px] font-bold text-bio-deep/60 dark:text-bio-white/50 uppercase tracking-widest font-mono">
@@ -99,7 +99,7 @@ export function Sidebar({
                 className={`w-full text-left border-b border-bio-white/10 dark:border-bio-white/10 transition-all group relative ${
                   isActive 
                     ? 'bg-bio-purple text-bio-deep' 
-                    : 'bg-white dark:bg-bio-deep text-bio-deep dark:text-bio-white hover:bg-bio-deep/5 dark:hover:bg-bio-white/5'
+                    : 'bg-bio-deep/5 dark:bg-bio-deep text-bio-deep dark:text-bio-white hover:bg-bio-deep/5 dark:hover:bg-bio-white/5'
                 } ${isCollapsed ? 'p-4 flex justify-center' : 'p-6'}`}
                 title={isCollapsed ? (session.title || t('chat.session.defaultTitle')) : undefined}
               >
