@@ -176,7 +176,7 @@ export function useLiveAudio({ systemInstruction, token }: UseLiveAudioProps) {
     const getWebSocketUrl = () => {
       let baseUrl = '';
       if (window.location.hostname.includes('railway.app')) {
-        baseUrl = 'wss://consultoria-backend.up.railway.app/api/live';
+        baseUrl = 'wss://clarity-machine-backend.up.railway.app/api/live';
       } else if ((window as any).ENV?.VITE_API_URL) {
          const url = new URL((window as any).ENV.VITE_API_URL);
          const protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';

@@ -1,17 +1,16 @@
 import { useRef, useEffect, type FormEvent, type KeyboardEvent } from 'react'
-import { FileText, Loader2, Send, Mic } from 'lucide-react'
+import { Loader2, Send, Mic } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 interface ChatInputProps {
   input: string
   setInput: (value: string) => void
   onSubmit: (e: FormEvent) => void
-  onGenerateReport: () => void
   onToggleLive: () => void
   isLoading: boolean
 }
 
-export function ChatInput({ input, setInput, onSubmit, onGenerateReport, onToggleLive, isLoading }: ChatInputProps) {
+export function ChatInput({ input, setInput, onSubmit, onToggleLive, isLoading }: ChatInputProps) {
   const { t } = useTranslation()
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -72,15 +71,6 @@ export function ChatInput({ input, setInput, onSubmit, onGenerateReport, onToggl
           >
             <div className="absolute top-0 right-0 w-2 h-2 bg-bio-lime animate-pulse" />
             <Mic className="h-4 w-4" />
-          </button>
-          
-          <button
-            type="button"
-            onClick={onGenerateReport}
-            className="h-full px-4 bg-white border-2 border-bio-deep/10 text-bio-deep/60 dark:bg-bio-white/5 dark:border-bio-white/20 dark:text-bio-white/60 hover:text-bio-purple hover:border-bio-purple hover:bg-bio-purple/10 dark:hover:text-bio-white transition-all flex items-center justify-center"
-            title={t('chat.footer.generateReportTooltip')}
-          >
-            <FileText className="h-4 w-4" />
           </button>
         </div>
       </div>

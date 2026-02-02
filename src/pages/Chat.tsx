@@ -56,10 +56,6 @@ export function Chat() {
     sendMessage(t('chat.body.aiMessage.deepDive') + ` ${area.label}`, area.label)
   }
 
-  function handleGenerateReport() {
-    sendMessage(t('chat.footer.generateReport'))
-  }
-
   return (
     <div className="h-screen bg-bio-deep/5 text-bio-deep dark:bg-bio-deep dark:text-bio-white flex font-sans overflow-hidden">
       <div className="flex-1 flex max-w-[1920px] mx-auto w-full border-x border-bio-deep/10 dark:border-bio-white/10 bg-bio-deep/5 dark:bg-bio-deep relative">
@@ -135,7 +131,6 @@ export function Chat() {
                   isLoading={isLoading}
                   onSubmit={handleSubmit}
                   onToggleLive={() => setIsLiveMode(true)}
-                  onGenerateReport={handleGenerateReport}
                 />
               </div>
             </div>
