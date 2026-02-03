@@ -51,8 +51,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  const getRedirectUrl = () => {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return window.location.origin
+    }
+    return 'https://clarity-machine-frontend.up.railway.app'
+  }
+
   async function signInWithEmail(email: string) {
-    const redirectTo = window.location.origin // Redireciona para a home após clicar no link
+    const redirectTo = getRedirectUrl() // Redireciona para a home após clicar no link
     return supabase.auth.signInWithOtp({ 
       email: email.trim(),
       options: {
@@ -69,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function signUp(email: string, password: string) {
-    const redirectTo = window.location.origin
+    const redirectTo = getRedirectUrl()
     return supabase.auth.signUp({
       email: email.trim(),
       password: password,
@@ -80,7 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function resendSignUp(email: string) {
-    const redirectTo = window.location.origin
+    const redirectTo = getRedirectUrl()
     return supabase.auth.resend({
       type: 'signup',
       email: email.trim(),
