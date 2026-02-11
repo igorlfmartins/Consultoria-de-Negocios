@@ -115,10 +115,10 @@ export async function sendConsultoriaMessage(params: {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    const errorMessage = extractErrorMessage(errorData.error)
-      ?? extractErrorMessage(errorData)
-      ?? (typeof errorData.reply === 'string' ? errorData.reply : null)
-      ?? (typeof errorData.error === 'string' ? errorData.error : null)
+    console.error('API Error Response:', errorData);
+    const errorMessage = typeof errorData.error === 'object' 
+      ? JSON.stringify(errorData.error, null, 2) 
+      : (errorData.reply || errorData.error);
     throw new Error(errorMessage || 'Falha ao comunicar com o serviço de consultoria');
   }
 
